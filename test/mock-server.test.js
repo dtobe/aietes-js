@@ -67,6 +67,13 @@ describe("AietesServer IT", () => {
     expect(res.status).toBe(404);
   });
 
+  it("mock responds with 404 and error body for unconfigured route", async () => {
+    const res = await request(mockServer.server).get("/endpointUnknown");
+    expect(res.status).toBe(404);
+    expect(res.body).toBeTruthy();
+    expect(res.text).toContain("{\"error\":{\"message\":\"The route was not configured!\"}}");
+  });
+
   it("response has the default for status and all other values are optional", async () => {
     const res = await request(mockServer.server).get("/endpoint2");
     expect(res.status).toBe(200);
