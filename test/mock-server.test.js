@@ -65,12 +65,6 @@ describe("AietesServer IT", () => {
   it("mock responds with 404 for unsuppored operation (e.g. PATCH)", async () => {
     const res = await request(mockServer.server).patch("/endpoint1");
     expect(res.status).toBe(404);
-  });
-
-  it("mock responds with 404 and error body for unconfigured route", async () => {
-    const res = await request(mockServer.server).get("/endpointUnknown");
-    expect(res.status).toBe(404);
-    expect(res.body).toBeTruthy();
     expect(res.text).toContain("{\"error\":{\"message\":\"The route was not configured!\"}}");
   });
 
