@@ -6,8 +6,16 @@ describe("AietesServer IT", () => {
   let mockServer;
   const responseObject = {
     status: 201,
-    headers: { "x-rd-some-header": "hasenase" },
+    headers: { "some-header": "hasenase" },
     data: { field1: 1, field2: "value" }
+  };
+  const responseObject2 = {
+    status: 400,
+    headers: {
+      "some-header": "hasenase",
+      "some-other-header": "someValue"
+     },
+    data: { field1: 1 }
   };
 
   beforeAll(async () => {
@@ -22,6 +30,12 @@ describe("AietesServer IT", () => {
         },
         "/endpoint2": {
           get: {}
+        },
+        "/endpoint3": {
+          get: [
+            responseObject,
+            responseObject2
+          ]
         }
       },
       await getPort()
@@ -37,28 +51,46 @@ describe("AietesServer IT", () => {
   it("response has all the values set on the mock for a get", async () => {
     const res = await request(mockServer.server).get("/endpoint1");
     expect(res.status).toBe(201);
-    expect(res.header["x-rd-some-header"]).toEqual("hasenase");
+    expect(res.header["some-header"]).toEqual("hasenase");
     expect(res.body).toMatchObject({ field1: 1, field2: "value" });
   });
 
   it("response has all the values set on the mock for a post", async () => {
     const res = await request(mockServer.server).post("/endpoint1");
     expect(res.status).toBe(201);
-    expect(res.header["x-rd-some-header"]).toEqual("hasenase");
+    expect(res.header["some-header"]).toEqual("hasenase");
     expect(res.body).toMatchObject({ field1: 1, field2: "value" });
   });
 
   it("response has all the values set on the mock for a delete", async () => {
     const res = await request(mockServer.server).delete("/endpoint1");
     expect(res.status).toBe(201);
-    expect(res.header["x-rd-some-header"]).toEqual("hasenase");
+    expect(res.header["some-header"]).toEqual("hasenase");
     expect(res.body).toMatchObject({ field1: 1, field2: "value" });
   });
 
   it("response has all the values set on the mock for a put", async () => {
     const res = await request(mockServer.server).put("/endpoint1");
     expect(res.status).toBe(201);
-    expect(res.header["x-rd-some-header"]).toEqual("hasenase");
+    expect(res.header["some-header"]).toEqual("hasenase");
+    expect(res.body).toMatchObject({ field1: 1, field2: "value" });
+  });
+
+  it("should return responses in a list in a round robin fashion", async () => {
+    let res = await request(mockServer.server).get("/endpoint3");
+    expect(res.status).toBe(201);
+    expect(res.header["some-header"]).toEqual("hasenase");
+    expect(res.body).toMatchObject({ field1: 1, field2: "value" });
+
+    res = await request(mockServer.server).get("/endpoint3");
+    expect(res.status).toBe(400);
+    expect(res.header["some-header"]).toEqual("hasenase");
+    expect(res.header["some-other-header"]).toEqual("someValue");
+    expect(res.body).toMatchObject({ field1: 1 });
+
+    res = await request(mockServer.server).get("/endpoint3");
+    expect(res.status).toBe(201);
+    expect(res.header["some-header"]).toEqual("hasenase");
     expect(res.body).toMatchObject({ field1: 1, field2: "value" });
   });
 
@@ -101,7 +133,44 @@ describe("AietesServer IT", () => {
     });
   });
 
-  it("should should correctly update mock endpoints and restart the server", async () => {
+  it("should allow to update from single response to list of responses", async () => {
+    mockServer.update({
+      "/endpoint2": {
+        get: [
+          {
+            status: 401
+          },
+          {
+            status: 200
+          }
+        ]
+      }
+    });
+
+    let res = await request(mockServer.server).get("/endpoint2");
+
+    expect(res.status).toBe(401);
+
+    res = await request(mockServer.server).get("/endpoint2");
+
+    expect(res.status).toBe(200);
+  });
+
+  it("should not create new routes when update is called", async () => {
+    mockServer.update({
+      "/endpoint4": {
+        get: {
+          status: 200,
+        }
+      }
+    });
+
+    const res = await request(mockServer.server).get("/endpoint4");
+
+    expect(res.status).toBe(404);
+  });
+
+  it("should correctly update mock endpoints and restart the server", async () => {
     mockServer.reset({
       "/new-endpoint": {
         get: {
@@ -113,9 +182,14 @@ describe("AietesServer IT", () => {
       }
     });
 
-    const res = await request(mockServer.server).get("/new-endpoint");
+    let res = await request(mockServer.server).get("/new-endpoint");
 
     expect(res.status).toBe(200);
     expect(res.body).toMatchObject({ field1: "success" });
+
+    // previously configured endpoints are lost on reset
+    res = await request(mockServer.server).get("/endpoint1");
+    
+    expect(res.status).toBe(404);
   });
 });
