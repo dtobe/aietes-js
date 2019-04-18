@@ -1,6 +1,9 @@
 # aietes-js
 A mock server for Rest requests
 
+### Build Status
+[![Build Status](https://travis-ci.com/dtobe/aietes-js.png)](https://travis-ci.com/dtobe/aietes-js)
+
 
 aietes-js is a Wiremock inspired Express-based integration test framework for JavaScript `REST` APIs. 
 
