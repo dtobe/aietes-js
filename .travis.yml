@@ -1,15 +1,9 @@
 sudo: false
 language: node_js
 node_js:
-- '11'
+- '10'
 branches:
   all_branches: true
-cache:
-  directories:
-  - node_modules
-before_install:
-- npm update
+cache: yarn
 install:
-- npm install
-script:
-- npm test
+- yarn install
