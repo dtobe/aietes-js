@@ -97,6 +97,7 @@ describe("AietesServer IT", () => {
   it("mock responds with 404 for unsuppored operation (e.g. PATCH)", async () => {
     const res = await request(mockServer.server).patch("/endpoint1");
     expect(res.status).toBe(404);
+    expect(res.body.error.message).toMatch("Route /endpoint1 and method PATCH are not configured.");
   });
 
   it("response has the default for status and all other values are optional", async () => {
