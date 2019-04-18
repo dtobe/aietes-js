@@ -2,7 +2,7 @@
 A mock server for Rest requests
 
 ### Build Status
-[![Build Status](https://travis-ci.com/dtobe/aietes-js.png)](https://travis-ci.com/dtobe/aietes-js)
+[![Build Status](https://travis-ci.com/dtobe/aietes-js.svg?branch=master)](https://travis-ci.com/dtobe/aietes-js)
 
 
 aietes-js is a Wiremock inspired Express-based integration test framework for JavaScript `REST` APIs. 
@@ -15,6 +15,7 @@ In simple terms, aietes-js allows you to setup mock server endpoints and configu
 - Status code
 - Headers
 - JSON Response
+- Lists of JSON Responses
 
 
 ## Getting Started
@@ -23,5 +24,12 @@ In simple terms, aietes-js allows you to setup mock server endpoints and configu
 
 ### Installation 
 ```sh
-$ npm install aietes-js
+$ yarn install aietes-js
 ```
+
+## Credits
+Inspired by Mock-Json-Servier
+https://www.npmjs.com/package/mock-json-server
+
+## The name
+https://en.wikipedia.org/wiki/Ae%C3%ABtes#Jason_and_the_Argonauts
