@@ -23,8 +23,17 @@ In simple terms, aietes-js allows you to setup mock server endpoints and configu
 >To run aietes-js, you will need Node.js v10 or newer.
 
 ### Installation 
+
+To install aietes-js, you may choose one of the following methods:
+
+### npm
 ```sh
 $ npm install aietes-js
+```
+
+### yarn
+```sh
+$ yarn install aietes-js
 ```
 
 ## Credits
