@@ -24,7 +24,7 @@ In simple terms, aietes-js allows you to setup mock server endpoints and configu
 
 ### Installation 
 ```sh
-$ yarn install aietes-js
+$ npm install aietes-js
 ```
 
 ## Credits
