@@ -35,6 +35,10 @@ $ npm install aietes-js
 ```sh
 $ yarn install aietes-js
 ```
+or
+```sh
+$ yarn add aietes-js
+```
 
 ## Credits
 Inspired by Mock-Json-Servier
