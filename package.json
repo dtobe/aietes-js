@@ -1,6 +1,6 @@
 {
-  "name": "@dtobe/aietes-js",
-  "version": "0.1.0",
+  "name": "aietes-js",
+  "version": "0.2.0",
   "description": "JSON mock server for NodeJs applications",
   "main": "mock-server.js",
   "scripts": {
