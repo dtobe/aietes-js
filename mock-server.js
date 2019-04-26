@@ -2,7 +2,7 @@ const express = require("express");
 const _ = require("lodash");
 const enableDestroy = require("server-destroy");
 const morgan = require("morgan");
-const unconfiguredRoutesHandler = require('./errorHandler');
+const unconfiguredRoutesHandler = require('./lib/errorHandler');
 
 const methods = ["get", "post", "put", "delete"];
 const isDebug = process.env.DEBUG || false;

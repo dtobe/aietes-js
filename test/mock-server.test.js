@@ -1,5 +1,5 @@
 const request = require("supertest");
-const AietesServer = require("../lib/mock-server");
+const AietesServer = require("../mock-server");
 const getPort = require("get-port");
 
 describe("AietesServer IT", () => {
