@@ -4,7 +4,7 @@ const enableDestroy = require("server-destroy");
 const morgan = require("morgan");
 const unconfiguredRoutesHandler = require('./lib/errorHandler');
 
-const methods = ["get", "post", "put", "delete"];
+const SUPPORTED_METHODS = ["get", "post", "put", "delete"];
 const isDebug = process.env.DEBUG || false;
 
 const log = data => {
@@ -79,22 +79,12 @@ class AietesServer {
   }
 
   _makeRoutes() {
-    _.each(this.responses, (value, path) => {
-      _.each(value, (responseData, method) => {
+    _.each(this.responses, (responsesByMethod, path) => {
+      Object.keys(responsesByMethod).forEach((method) => {
         this._initMetaDataForPath(path, method);
-        if (_.includes(methods, method)) {
-          this.app[method](path, (req, res) => {
-            const endPointResponse = this.responses[path][method];
-            let currentResponse;
-            if (Array.isArray(endPointResponse)) {
-              const currentResponseIndex = this.responsesMetaData[path][method].currentResponse;
-              currentResponse = endPointResponse[currentResponseIndex];
-              this._nextResponse(path, method);
-            } else {
-              currentResponse = endPointResponse;
-            }
-            return this._sendResponse(res, currentResponse);
-          });
+        const methodForExpress = method.toLowerCase();
+        if (SUPPORTED_METHODS.includes(methodForExpress)) {
+          this.app[methodForExpress](path, this._createHandler(path, method));
         } else {
           console.warn(`Method ${method} is not supported. Path '${path}'-${method} will be skipped.`);
         }
@@ -110,6 +100,21 @@ class AietesServer {
       this.responsesMetaData[path][method] = {};
     }
     this.responsesMetaData[path][method].currentResponse = 0;
+  }
+
+  _createHandler(path, method) {
+    return (req, res) => {
+      const endPointResponse = this.responses[path][method];
+      let currentResponse;
+      if (Array.isArray(endPointResponse)) {
+        const currentResponseIndex = this.responsesMetaData[path][method].currentResponse;
+        currentResponse = endPointResponse[currentResponseIndex];
+        this._nextResponse(path, method);
+      } else {
+        currentResponse = endPointResponse;
+      }
+      return this._sendResponse(res, currentResponse);
+    }
   }
 
   _nextResponse(path, method) {

@@ -36,6 +36,9 @@ describe("AietesServer IT", () => {
             responseObject,
             responseObject2
           ]
+        },
+        "/endpoint-caps": {
+          GET: {}
         }
       },
       await getPort()
@@ -94,10 +97,21 @@ describe("AietesServer IT", () => {
     expect(res.body).toMatchObject({ field1: 1, field2: "value" });
   });
 
+  it("should respond with 404 and correct response format to unconfigured route", async () => {
+    const res = await request(mockServer.server).get("/unconfiguredroute");
+    expect(res.status).toBe(404);
+    expect(res.body.error.message).toMatch("Route /unconfiguredroute and method GET are not configured.");
+  });
+
   it("mock responds with 404 for unsuppored operation (e.g. PATCH)", async () => {
     const res = await request(mockServer.server).patch("/endpoint1");
     expect(res.status).toBe(404);
     expect(res.body.error.message).toMatch("Route /endpoint1 and method PATCH are not configured.");
+  });
+
+  it("should ignore capitalization of method keys", async () => {
+    const res = await request(mockServer.server).get("/endpoint-caps");
+    expect(res.status).toBe(200);
   });
 
   it("response has the default for status and all other values are optional", async () => {
