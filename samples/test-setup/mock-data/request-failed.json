@@ -1,0 +1,11 @@
+{
+  "/api/currentprice": {
+    "get": {
+      "status": 400,
+      "data": {
+        "error": "Something went wrong",
+        "error_description": "I don't work on Tuesdays"
+      }
+    }
+  }
+}

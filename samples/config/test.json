@@ -1,0 +1,8 @@
+{
+    "server_port": 3000,
+    "end-point": {
+        "external-service": {
+            "currentprice": "http://localhost:3001/api/currentprice"
+        }
+    }
+}
