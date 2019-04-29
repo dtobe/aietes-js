@@ -103,8 +103,7 @@ describe("Sample IT for the bitcoin service", () => {
 
         expect(res.status).toBe(200);
         expect(responseMarkup).toBeTruthy();
-        expect(responseMarkup).toContain('<div class=\"bitcoin-price-container\">');
-        expect(responseMarkup).toContain('5148.82 UP');
+        expect(responseMarkup).toContain("{\"btcPrice\":{\"up\":\"5148.82\"}}");
     });
   });
 ```
