@@ -35,30 +35,17 @@ $ yarn install aietes-js
 ```
 
 ## Getting Started
-> Import & setup
+### Import
 
 ```
-const request = require("supertest");
-const getPort = require("get-port");
-const MockServer = require("../../lib/mock-server");
-const testServerConfig = require("../test-setup/test-server-config");
-const mockServerResponses = require("../test-setup/mock-data/price-above-5000");
+const request = require("supertest");                                              // Test framework for rest calls
+const getPort = require("get-port");                                               // Library for getting free ports
+const MockServer = require("../../lib/mock-server");                               // The Aites Mockserver
+const testServerConfig = require("../test-setup/test-server-config");              // Optional config for your test endpoints
+const mockServerResponses = require("../test-setup/mock-data/price-above-5000");   // A JSON containing your mock responses
 ```
-> The json format
-```
-{
-     "/api/currentprice": {         // The URL of your mock service
-       "get": {                     // The request type
-         "status": 200,             // The status you want the mock to return
-         "data": {                  // Everything within data is the json the endpoint will return
-           "sampleData": "fooBar"
-         }
-       }
-     }
-   }
-   
-```
-> Setup & Teardown
+
+### Setup & Teardown
 ```
     beforeAll(async () => {
         randomPort = await getPort();
@@ -79,9 +66,36 @@ const mockServerResponses = require("../test-setup/mock-data/price-above-5000");
         externalServiceMock.stop();
         testServerConfig.clear();
     });
-    
 ```
-> An example test
+### JSON format example
+```
+{                                        
+ "/api/currentprice": {                                 // The URL of your mock service                                                       
+   "get": {                                             // The request type                                                       
+     "status": 200,                                     // The status you want the mock to return                                         
+     "data": {                                          // Everything within data is the json the endpoint will return
+       "time": {
+         "updated": "Apr 15, 2019 11:57:00 UTC",
+         "updatedISO": "2019-04-15T11:57:00+00:00",
+         "updateduk": "Apr 15, 2019 at 12:57 BST"
+       },
+       "disclaimer": "This data was produced from the CoinDesk Bitcoin Price Index (USD). Non-USD currency data converted using hourly conversion rate from openexchangerates.org",
+       "chartName": "Bitcoin",
+       "bpi": {
+         "USD": {
+           "code": "USD",
+           "symbol": "&#36;",
+           "rate": "5,148.8200",
+           "description": "United States Dollar",
+           "rate_float": 5148.82
+         }
+       }
+     }
+   }
+ }
+}
+```
+### An example test
 
 ```
 describe("Sample IT for the bitcoin service", () => {
