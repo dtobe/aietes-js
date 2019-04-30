@@ -33,7 +33,7 @@ describe("Sample IT for the bitcoin service", () => {
 
     const callExternalService = () => {
         return request(server)
-            .get("/ui")
+            .get("/example")
     };
 
     it("should return 200 and display UP if Bitcoin price is above $5000", async () => {

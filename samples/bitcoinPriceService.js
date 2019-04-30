@@ -13,7 +13,7 @@ router.get('/', async (req, res, next) => {
     }
 });
 
-router.get('/ui', async (req, res, next) => {
+router.get('/example', async (req, res, next) => {
     try {
         const btcPrice = await getBitcoinPrice();
 

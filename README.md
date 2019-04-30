@@ -33,17 +33,11 @@ $ npm install aietes-js
 ```sh
 $ yarn install aietes-js
 ```
-
+or
+```sh
+$ yarn add aietes-js
+```
 ## Getting Started
-### Import
-
-```
-const request = require("supertest");                                              // Test framework for rest calls
-const getPort = require("get-port");                                               // Library for getting free ports
-const MockServer = require("../../lib/mock-server");                               // The Aites Mockserver
-const testServerConfig = require("../test-setup/test-server-config");              // Optional config for your test endpoints
-const mockServerResponses = require("../test-setup/mock-data/price-above-5000");   // A JSON containing your mock responses
-```
 
 ### Setup & Teardown
 ```
@@ -70,10 +64,10 @@ const mockServerResponses = require("../test-setup/mock-data/price-above-5000");
 ### JSON format example
 ```
 {                                        
- "/api/currentprice": {                                 // The URL of your mock service                                                       
-   "get": {                                             // The request type                                                       
-     "status": 200,                                     // The status you want the mock to return                                         
-     "data": {                                          // Everything within data is the json the endpoint will return
+ "/api/currentprice": {                                                      
+   "get": {                                                      
+     "status": 200,                                                      
+     "data": {                                        
        "time": {
          "updated": "Apr 15, 2019 11:57:00 UTC",
          "updatedISO": "2019-04-15T11:57:00+00:00",
