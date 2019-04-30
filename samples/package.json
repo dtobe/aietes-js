@@ -1,0 +1,25 @@
+{
+  "name": "simple-example",
+  "version": "1.0.0",
+  "description": "Simple example on how to use Aietes",
+  "main": "server.js",
+  "scripts": {
+    "start": "NODE_ENV=default node ./server.js",
+    "test": "jest --verbose"
+  },
+  "author": "Kai",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "config": "^3.1.0",
+    "express": "^4.16.4"
+  },
+  "devDependencies": {
+    "get-port": "^5.0.0",
+    "jest": "^24.7.1",
+    "supertest": "^4.0.2"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testRegex": ".*\\.sample-test\\.js$"
+  }
+}
