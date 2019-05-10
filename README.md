@@ -1,126 +1,129 @@
 # aietes-js
-A mock server for Rest requests
+Express.js-based mock server for RESTful APIs inspired by Wiremock.
 
-### Build Status
 [![Build Status](https://travis-ci.com/dtobe/aietes-js.svg?token=vnspnEo4jpC1xxuzG92q&branch=master)](https://travis-ci.com/dtobe/aietes-js)
-
-
-aietes-js is a Wiremock inspired Express-based integration test framework for JavaScript `REST` APIs. 
-
 
 ## Features
 
-In simple terms, aietes-js allows you to setup mock server endpoints and configure
+- Set up mock response per HTTP method and route/resource path
+- For each mock response define
+    - Status code
+    - Response headers
+    - JSON body
+- Set up lists of responses
 
-- Status code
-- Headers
-- JSON Response
-- Lists of JSON Responses
+## Installation 
+To run aietes-js [Node.js](https://nodejs.org/en/download/) v10 or newer is required.
 
+Install Aietes-js using your preferred dependency manager:
 
-## Getting Started
->To run aietes-js, you will need Node.js v10 or newer.
-
-### Installation 
-To install aietes-js, you may choose one of the following methods:
-
-### npm
-```sh
+#### npm
+```bash
 $ npm install aietes-js
 ```
 
-### yarn
-```sh
+#### yarn
+```bash
 $ yarn install aietes-js
 ```
 or
-```sh
+```bash
 $ yarn add aietes-js
 ```
+
 ## Getting Started
 
+### Programmatic Usage
+
 ### Setup & Teardown
-```
-    beforeAll(async () => {
-        randomPort = await getPort();
-        testServerConfig.setup({server_port: randomPort });
-        externalServiceMock = new MockServer(mockServerResponses, randomPort);
-        externalServiceMock.start();
-    });
+Example usage in Jest style tests.
+```javascript
+    let mockServer;
 
-    beforeEach(() => {
-        server = require("../server");
+    // instantiate the mock server with config and a free port to run on and start it
+    beforeAll(() => {
+        mockServer = new AietesServer(defaultResponseConfiguration, someFreePort);
+        mockServer.start();
     });
-
+    
+    // optionally reload your config after each test case without restarting the server
     afterEach(() => {
-        server.close();
+        mockServer.update(defaultResponseConfiguration);
     });
 
+    // stop and destroy the mock server instance
     afterAll(() => {
-        externalServiceMock.stop();
-        testServerConfig.clear();
+        mockServer.stop();
+    });
+    
+    // ...
+    
+    // update (some or all) existing endpoints with new response definitions
+    // endpoints missing in this config are not altered
+    it('some test case', async () => {
+        mockServer.update(partialCustomResponseConfiguration);
+        // ...
     });
 ```
-### JSON format example
+**Caution:** You can also reset the server. This means that the mock server instance is stopped, torn down and restarted with new routes and response configuration. All previously defined routes and responses are dropped!
+```javascript
+    mockServer.reset(newRoutesAndResponseConfiguration);
 ```
-{                                        
- "/api/currentprice": {                                                      
-   "get": {                                                      
-     "status": 200,                                                      
-     "data": {                                        
-       "time": {
-         "updated": "Apr 15, 2019 11:57:00 UTC",
-         "updatedISO": "2019-04-15T11:57:00+00:00",
-         "updateduk": "Apr 15, 2019 at 12:57 BST"
-       },
-       "disclaimer": "This data was produced from the CoinDesk Bitcoin Price Index (USD). Non-USD currency data converted using hourly conversion rate from openexchangerates.org",
-       "chartName": "Bitcoin",
-       "bpi": {
-         "USD": {
-           "code": "USD",
-           "symbol": "&#36;",
-           "rate": "5,148.8200",
-           "description": "United States Dollar",
-           "rate_float": 5148.82
-         }
-       }
-     }
-   }
- }
+
+### Response configuration
+The response configuration object that needs to be passed to the AietesServer constructor, broken down here for clarity.
+```javascript
+{
+    "/endpoint1": {
+        // currently supported HTTP methods
+        get: someResponseObject,
+        post: someResponseObject,
+        delete: someResponseObject,
+        put: someResponseObject
+    },
+    "/endpoint2": {
+        // empty response, default status is 200
+        get: {}
+    },
+    "/endpoint3": {
+        // list of responses
+        get: [
+            someResponseObject,
+            someResponseObject2
+        ]
+    }
 }
 ```
-### An example test
-
+Format of an individual repsonse object.
+```javascript
+{
+    status: 201,
+    headers: { 
+        "some-header": "header-value"
+    },
+    data: {
+        "field1": 1, 
+        "field2": "value",
+        "field3": false
+    }
+}
 ```
-describe("Sample IT for the bitcoin service", () => {
-    let server;
-    let externalServiceMock;
-    let randomPort;
 
-    ...
-    ...
-    
-    const callExternalService = () => {
-        return request(server)
-            .get("/ui")
-    };
-
-    it("should return 200 and display UP if Bitcoin price is above $5000", async () => {
-        const res = await callExternalService();
-        const responseMarkup = res.text;
-
-        expect(res.status).toBe(200);
-        expect(responseMarkup).toBeTruthy();
-        expect(responseMarkup).toContain("{\"btcPrice\":{\"up\":\"5148.82\"}}");
-    });
-  });
-```
 ## Examples
 A complete example project including the above can be found in the `samples` directory of the project.
+
+## Contact
+[Issues, bugs and feature requests](https://github.com/dtobe/aietes-js/projects/1)
+
+## Contributing
+[How to contribute](CONTRIBUTING.md)
 
 ## Credits
 Inspired by [Mock-Json-Server](https://www.npmjs.com/package/mock-json-server) and [Wiremock](http://wiremock.org)
 
 ## The name
-Explanation of the name [Aietes](https://en.wikipedia.org/wiki/Ae%C3%ABtes#Jason_and_the_Argonauts)
+Aietes (or one of the official English spellings, "Aeëtes", "Aeeta", or "Æëtes") was the king of Colchis in the myth of Jason and the Argonauts. He subjected Jason, who had come for the golden fleece, to several wicked tests (and may have mocked him in the process). See Wikipedia on [Aietes](https://en.wikipedia.org/wiki/Ae%C3%ABtes#Jason_and_the_Argonauts) and [Jason in Colchis](https://en.wikipedia.org/wiki/Jason#The_arrival_in_Colchis).
 
+## License
+
+  [MIT](LICENSE)
