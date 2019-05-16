@@ -8,23 +8,17 @@ const MetaData = require('./lib/metaData');
 const SUPPORTED_METHODS = ["get", "post", "put", "delete"];
 const isDebug = process.env.DEBUG || false;
 
-const log = data => {
-  if (!process.env.NO_OUTPUT) {
-    console.log(data);
-  }
-};
-
 class AietesServer {
   constructor(responses, port) {
     // clone responses object to avoid external changes to the reference
     this.responses = Object.assign({}, responses);
-    this.responsesMetaData = new MetaData(this.getNumResponses);
+    this.responsesMetaData = new MetaData();
     this.serverPort = port;
     this.app = null;
     this.server = null;
     this._setup();
   }
-  
+
   start() {
     try {
       this._listen(() => {
@@ -39,12 +33,12 @@ class AietesServer {
       process.exit(1);
     }
   }
-  
+
   update(responses) {
     log('Updating responses');
     Object.assign(this.responses, responses);
   }
-  
+
   reset(responses) {
     log("Restarting Aietes server");
     this._end();
@@ -53,12 +47,16 @@ class AietesServer {
     this._setup();
     this.start();
   }
-  
+
   stop() {
     log("Exiting Aietes server");
     this._end();
   }
-  
+
+  setDelay(delayMs, path, method) {
+    this.responsesMetaData.setDelay(delayMs, path, method);
+  }
+
   _setup() {
     this.app = express();
     this.app.use(morgan("tiny"));
@@ -68,14 +66,14 @@ class AietesServer {
     this._makeRoutes();
     this.app.use(unconfiguredRoutesHandler);
   }
-  
+
   _listen(callback) {
     this.server = this.app.listen(this.serverPort, () => {
       callback();
     });
     enableDestroy(this.server);
   }
-  
+
   _end() {
     this.server.destroy();
   }
@@ -95,28 +93,46 @@ class AietesServer {
   }
 
   _createHandler(path, method) {
-    return (req, res) => {
+    return async (req, res) => {
       const endPointResponse = this.responses[path][method];
       let currentResponse;
       if (Array.isArray(endPointResponse)) {
-        log('Getting next response index');
         const responseIndex = this.responsesMetaData.nextResponseIndex(path, method, endPointResponse.length);
-        log(`Current ResponseIndex = ${responseIndex}`);
         currentResponse = endPointResponse[responseIndex];
       } else {
         currentResponse = endPointResponse;
       }
-      return this._sendResponse(res, currentResponse);
+      const delay = this.responsesMetaData.getDelay(path, method);
+      return createSendResponseCallback(res, currentResponse, delay)();
     }
   }
+}
 
-  _sendResponse(res, responseData) {
+const createSendResponseCallback = (handlerResponse, responseData, delay) => {
+  return async () => {
     const returnStatus = responseData["status"] || 200;
-    res
-      .status(returnStatus)
-      .set(responseData["headers"])
-      .jsonp(responseData["data"]);
+    if (delay) {
+      log(`Delaying response for ${delay}ms`);
+      await setTimeout(() => {
+        handlerResponse
+          .status(returnStatus)
+          .set(responseData["headers"])
+          .jsonp(responseData["data"]);
+      }, delay);
+    } else {
+      log('Returning immediate response');
+      handlerResponse
+        .status(returnStatus)
+        .set(responseData["headers"])
+        .jsonp(responseData["data"]);
+    }
   }
 }
+
+const log = data => {
+  if (!process.env.NO_OUTPUT) {
+    console.log(data);
+  }
+};
 
 module.exports = AietesServer;
