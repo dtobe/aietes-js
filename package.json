@@ -21,7 +21,8 @@
     "express": "^4.16.4",
     "lodash": "^4.17.11",
     "morgan": "^1.9.1",
-    "server-destroy": "^1.0.1"
+    "server-destroy": "^1.0.1",
+    "yargs": "^13.2.4"
   },
   "devDependencies": {
     "get-port": "^4.2.0",
