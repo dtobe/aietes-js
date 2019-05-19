@@ -6,14 +6,15 @@
   "scripts": {
     "test": "jest",
     "test-dev": "jest --watchAll --verbose",
-    "coverage": "jest --coverage"
+    "coverage": "jest --coverage",
+    "start-standalone": "node ./standalone"
   },
   "repository": "github:dtobe/aietes-js",
   "author": "Tobias Ehrler <tobias_ehrler@yahoo.co.uk>",
   "contributors": [
     "Tobias Ehrler <tobias.ehrler@yahoo.co.uk>",
     "benjaiser <devjaiser@gmail.com>",
-    "spik3r"
+    "Kai Tait <kaiftait@gmail.com>"
   ],
   "license": "MIT",
   "dependencies": {
