@@ -19,6 +19,7 @@
   "license": "MIT",
   "dependencies": {
     "express": "^4.16.4",
+    "fs": "^0.0.1-security",
     "lodash": "^4.17.11",
     "morgan": "^1.9.1",
     "server-destroy": "^1.0.1",

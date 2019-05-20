@@ -33,6 +33,23 @@ $ yarn add aietes-js
 
 ## Getting Started
 
+### Standalone Aietes
+To run aietes-js as a standalone application run the following command
+```bash
+$ yarn run start-standalone
+```
+Optional command-line arguments
+
+`--json=response.json` The responseObject Aietes will return when called: _requires jsonfile in the root of your project_
+
+Altenatively you can overwrite individual things such as returned status, headers and body:
+
+`--status=404`
+
+`--header=some-header`
+
+`--data={abc: '123'}`
+```
 ### Programmatic Usage
 
 ### Setup & Teardown
