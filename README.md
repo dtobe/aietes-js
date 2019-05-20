@@ -48,7 +48,7 @@ Altenatively you can overwrite individual things such as returned status, header
 
 `--header=some-header`
 
-`--data={abc: '123'}`
+`--data=some-data`
 ```
 ### Programmatic Usage
 
