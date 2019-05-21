@@ -27,12 +27,12 @@ describe("Aietes Server Timeout IT", () => {
   });
 
   afterEach(() => {
-    mockServer.setDelay(0);
-    mockServer.setDelay(0, "/endpoint1", "get");
+    mockServer.setDelayMs(0);
+    mockServer.setDelayMs(0, "/endpoint1", "get");
   });
 
   it('should allow configuring delay globally', async (done) => {
-    mockServer.setDelay(200);
+    mockServer.setDelayMs(200);
     try {
       await request(mockServer.server).get("/endpoint1").timeout(190);
       done.fail ("Request did not time out");
@@ -43,7 +43,7 @@ describe("Aietes Server Timeout IT", () => {
   });
 
   it('should allow configuring delay per endpoint', async (done) => {
-    mockServer.setDelay(200, "/endpoint1", "get");
+    mockServer.setDelayMs(200, "/endpoint1", "get");
     try {
       await request(mockServer.server).get("/endpoint1").timeout(190);
       done.fail ("Request did not time out");
@@ -54,7 +54,7 @@ describe("Aietes Server Timeout IT", () => {
   });
 
   it('should reset the global delay correctly', async (done) => {
-    mockServer.setDelay(500);
+    mockServer.setDelayMs(500);
     try {
       await request(mockServer.server).get("/endpoint1").timeout(100);
       done.fail ("Request did not time out");
@@ -62,7 +62,7 @@ describe("Aietes Server Timeout IT", () => {
       expect(error.code).toEqual('ECONNABORTED');
     }
 
-    mockServer.setDelay(0);
+    mockServer.setDelayMs(0);
     const res = await request(mockServer.server).get("/endpoint1").timeout(100);
     expect(res.status).toBe(200);
 
@@ -70,7 +70,7 @@ describe("Aietes Server Timeout IT", () => {
   });
 
   it('should reset the per endpoint delay correctly', async (done) => {
-    mockServer.setDelay(500, "/endpoint1", "get");
+    mockServer.setDelayMs(500, "/endpoint1", "get");
     try {
       await request(mockServer.server).get("/endpoint1").timeout(100);
       done.fail ("Request did not time out");
@@ -78,7 +78,7 @@ describe("Aietes Server Timeout IT", () => {
       expect(error.code).toEqual('ECONNABORTED');
     }
     
-    mockServer.setDelay(0, "/endpoint1", "get");
+    mockServer.setDelayMs(0, "/endpoint1", "get");
     const res = await request(mockServer.server).get("/endpoint1").timeout(100);
     expect(res.status).toBe(200);
 

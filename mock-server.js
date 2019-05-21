@@ -53,8 +53,8 @@ class AietesServer {
     this._end();
   }
 
-  setDelay(delayMs, path, method) {
-    this.responsesMetaData.setDelay(delayMs, path, method);
+  setDelayMs(delayMs, path, method) {
+    this.responsesMetaData.setDelayMs(delayMs, path, method);
   }
 
   _setup() {
@@ -102,23 +102,23 @@ class AietesServer {
       } else {
         currentResponse = endPointResponse;
       }
-      const delay = this.responsesMetaData.getDelay(path, method);
-      return createSendResponseCallback(res, currentResponse, delay)();
+      const delayMs = this.responsesMetaData.getDelayMs(path, method);
+      return createSendResponseCallback(res, currentResponse, delayMs)();
     }
   }
 }
 
-const createSendResponseCallback = (handlerResponse, responseData, delay) => {
+const createSendResponseCallback = (handlerResponse, responseData, delayMs) => {
   return async () => {
     const returnStatus = responseData["status"] || 200;
-    if (delay) {
-      log(`Delaying response for ${delay}ms`);
+    if (delayMs) {
+      log(`Delaying response for ${delayMs}ms`);
       await setTimeout(() => {
         handlerResponse
           .status(returnStatus)
           .set(responseData["headers"])
           .jsonp(responseData["data"]);
-      }, delay);
+      }, delayMs);
     } else {
       log('Returning immediate response');
       handlerResponse
