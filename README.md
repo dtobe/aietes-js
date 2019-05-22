@@ -11,6 +11,7 @@ Express.js-based mock server for RESTful APIs inspired by Wiremock.
     - Response headers
     - JSON body
 - Set up lists of responses
+- Set a request delay (e.g. to simulate lag)
 
 ## Installation 
 To run aietes-js [Node.js](https://nodejs.org/en/download/) v10 or newer is required.
