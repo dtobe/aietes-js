@@ -109,6 +109,29 @@ Format of an individual repsonse object.
 }
 ```
 
+
+### Simulating delay or lag
+A delay in mock request processing can be set to simulate network lag or long running operations.
+This can be done per route and method or globally.
+#### Global delay
+Setting the delay in milliseconds:
+```javascript
+mockServer.setDelayMs(200);
+```
+Resetting the delay:
+```javascript
+mockServer.setDelayMs(0);
+```
+#### Per route and method delay
+Setting the delay in milliseconds:
+```javascript
+mockServer.setDelayMs(200, "/endpoint1", "get");
+```
+Resetting the delay:
+```javascript
+mockServer.setDelayMs(0, "/endpoint1", "get");
+```
+
 ## Examples
 A complete example project including the above can be found in the `samples` directory of the project.
 
