@@ -1,7 +1,7 @@
 # aietes-js
 Express.js-based mock server for RESTful APIs inspired by Wiremock.
 
-[![Build Status](https://travis-ci.com/dtobe/aietes-js.svg?token=vnspnEo4jpC1xxuzG92q&branch=master)](https://travis-ci.com/dtobe/aietes-js) [![Join the chat at https://gitter.im/aietes-js/community](https://badges.gitter.im/aietes-js/community.svg)](https://gitter.im/aietes-js/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Build Status](https://travis-ci.com/dtobe/aietes-js.svg?token=vnspnEo4jpC1xxuzG92q&branch=master)](https://travis-ci.com/dtobe/aietes-js) [![Join the chat at https://gitter.im/aietes-js/community](https://badges.gitter.im/aietes-js/community.svg)](https://gitter.im/aietes-js/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![Coverage Status](https://coveralls.io/repos/github/dtobe/aietes-js/badge.svg?branch=master)](https://coveralls.io/github/dtobe/aietes-js?branch=master)
 
 ## Features
 
