@@ -14,7 +14,7 @@ const log = data => {
 };
 
 class AietesServer {
-  constructor (responses, port) {
+  constructor(responses, port) {
     // clone responses object to avoid external changes to the reference
     this.responses = Object.assign({}, responses);
     this.responsesMetaData = {};
@@ -24,7 +24,7 @@ class AietesServer {
     this._setup();
   }
 
-  start () {
+  start() {
     try {
       this._listen(() => {
         log(`Aietes server running at http://localhost:${this.serverPort}/`);
@@ -39,11 +39,11 @@ class AietesServer {
     }
   }
 
-  update (responses) {
+  update(responses) {
     Object.assign(this.responses, responses);
   }
 
-  reset (responses) {
+  reset(responses) {
     console.log('Restarting Aietes server');
     this._end();
     this.responses = Object.assign({}, responses);
@@ -52,12 +52,12 @@ class AietesServer {
     this.start();
   }
 
-  stop () {
+  stop() {
     console.log('Exiting Aietes server');
     this._end();
   }
 
-  _setup () {
+  _setup() {
     this.app = express();
     this.app.use(morgan('tiny'));
     this.app.locals = {
@@ -67,18 +67,18 @@ class AietesServer {
     this.app.use(unconfiguredRoutesHandler);
   }
 
-  _listen (callback) {
+  _listen(callback) {
     this.server = this.app.listen(this.serverPort, () => {
       callback();
     });
     enableDestroy(this.server);
   }
 
-  _end () {
+  _end() {
     this.server.destroy();
   }
 
-  _makeRoutes () {
+  _makeRoutes() {
     _.each(this.responses, (responsesByMethod, path) => {
       Object.keys(responsesByMethod).forEach((method) => {
         this._initMetaDataForPath(path, method);
@@ -92,7 +92,7 @@ class AietesServer {
     });
   }
 
-  _initMetaDataForPath (path, method) {
+  _initMetaDataForPath(path, method) {
     if (!this.responsesMetaData[path]) {
       this.responsesMetaData[path] = {};
     }
@@ -102,7 +102,7 @@ class AietesServer {
     this.responsesMetaData[path][method].currentResponse = 0;
   }
 
-  _createHandler (path, method) {
+  _createHandler(path, method) {
     return (req, res) => {
       const endPointResponse = this.responses[path][method];
       let currentResponse;
@@ -117,13 +117,13 @@ class AietesServer {
     };
   }
 
-  _nextResponse (path, method) {
+  _nextResponse(path, method) {
     const currentValue = this.responsesMetaData[path][method].currentResponse;
     const maxValue = this.responses[path][method].length;
     this.responsesMetaData[path][method].currentResponse = (currentValue + 1) % maxValue;
   }
 
-  _sendResponse (res, responseData) {
+  _sendResponse(res, responseData) {
     const returnStatus = responseData['status'] || 200;
     res
       .status(returnStatus)
