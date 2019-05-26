@@ -7,3 +7,5 @@ branches:
 cache: yarn
 install:
 - yarn install
+after_script:
+- yarn coveralls

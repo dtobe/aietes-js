@@ -1,0 +1,26 @@
+{
+  "/api/currentprice": {
+    "get": {
+      "status": 200,
+      "data": {
+        "time": {
+          "updated": "Apr 15, 2019 11:57:00 UTC",
+          "updatedISO": "2019-04-15T11:57:00+00:00",
+          "updateduk": "Apr 15, 2019 at 12:57 BST"
+        },
+        "disclaimer": "This data was produced from the CoinDesk Bitcoin Price Index (USD). Non-USD currency data converted using hourly conversion rate from openexchangerates.org",
+        "chartName": "Bitcoin",
+        "bpi": {
+          "USD": {
+            "code": "USD",
+            "symbol": "&#36;",
+            "rate": "5,148.8200",
+            "description": "United States Dollar",
+            "rate_float": 5148.82
+          }
+        }
+      }
+    }
+  }
+}
+

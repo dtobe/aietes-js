@@ -1,0 +1,8 @@
+{
+    "server_port": 3000,
+    "end-point": {
+        "external-service": {
+            "currentprice": "https://api.coindesk.com/v1/bpi/currentprice.json"
+        }
+    }
+}

@@ -50,3 +50,6 @@ yarn.lock
 
 # Unit and integration tests
 test/
+
+# Sample project
+samples/

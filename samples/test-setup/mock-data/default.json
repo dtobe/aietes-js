@@ -1,0 +1,11 @@
+{
+  "/api/currentprice": {
+    "get": {
+      "status": 200,
+      "data": {
+        "You forgot to set a mock response": "try set it now"
+      }
+    }
+  }
+}
+
