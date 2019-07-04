@@ -18,15 +18,15 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "express": "^4.16.4",
+    "express": "^4.17.1",
     "lodash": "^4.17.11",
     "morgan": "^1.9.1",
     "server-destroy": "^1.0.1"
   },
   "devDependencies": {
-    "coveralls": "^3.0.3",
-    "get-port": "^4.2.0",
-    "jest": "^24.7.1",
+    "coveralls": "^3.0.4",
+    "get-port": "^5.0.0",
+    "jest": "^24.8.0",
     "supertest": "^4.0.2"
   }
 }
