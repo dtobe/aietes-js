@@ -14,7 +14,7 @@ standalone = async () => {
     }
 
     const responseObject = jsonResponse || {
-        status: argv.status || 201,
+        status: argv.status || 200,
         headers: argv.headers || { "some-header": "abc-123" },
         data: argv.data || { hello: "Aietes"}
     };
