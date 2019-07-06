@@ -7,8 +7,10 @@
     "test": "jest",
     "test-dev": "jest --watchAll --verbose",
     "coverage": "jest --coverage",
+    "eslint": "eslint .",
     "coveralls": "jest --coverage && coveralls < ./coverage/lcov.info"
   },
+  "pre-commit": "eslint",
   "repository": "github:dtobe/aietes-js",
   "author": "Tobias Ehrler <tobias_ehrler@yahoo.co.uk>",
   "contributors": [
@@ -24,6 +26,13 @@
     "server-destroy": "^1.0.1"
   },
   "devDependencies": {
+    "eslint": "^5.16.0",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-plugin-import": "^2.17.2",
+    "eslint-plugin-node": "^8.0.1",
+    "eslint-plugin-promise": "^4.1.1",
+    "eslint-plugin-standard": "^4.0.0",
+    "pre-commit": "^1.2.2",
     "coveralls": "^3.0.4",
     "get-port": "^5.0.0",
     "jest": "^24.8.0",
