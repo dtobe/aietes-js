@@ -2,20 +2,22 @@ const getPort = require("get-port");
 const argv = require("yargs").argv;
 const fs = require('fs');
 
-const MockServer = require("../mock-server");
+const AietesServer = require("../mock-server");
 
 standalone = async () => {
+    console.info("Starting Aietes standalone");
 
-    const _port = argv.port || await getPort();
+    const port = argv.port || await getPort();
+
     const responseFileName = argv.json;
     let jsonResponse;
     if (responseFileName) {
-        jsonResponse = JSON.parse(fs.readFileSync(responseFileName, 'utf8'));
+        jsonResponse = JSON.parse(await fs.readFile(responseFileName, 'utf8'));
     }
 
     const responseObject = jsonResponse || {
-        status: argv.status || 201,
-        headers: argv.headers || { "some-header": "abc-123" },
+        status: argv.status || 200,
+        headers: argv.headers || {},
         data: argv.data || { hello: "Aietes"}
     };
     const endpoint = {
@@ -23,9 +25,8 @@ standalone = async () => {
             get: responseObject
         }
     };
-    const standaloneMock = new MockServer(endpoint, _port);
+    const standaloneMock = new AietesServer(endpoint, port);
     standaloneMock.start();
-    console.info("started standalone.");
 };
 
 module.exports = standalone();

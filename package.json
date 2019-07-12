@@ -7,7 +7,7 @@
     "test": "jest",
     "test-dev": "jest --watchAll --verbose",
     "coverage": "jest --coverage",
-    "start-standalone": "node ./standalone"
+    "start": "node ./standalone"
   },
   "repository": "github:dtobe/aietes-js",
   "author": "Tobias Ehrler <tobias_ehrler@yahoo.co.uk>",
