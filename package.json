@@ -1,14 +1,17 @@
 {
   "name": "aietes-js",
-  "version": "0.2.0",
+  "version": "0.3.1",
   "description": "JSON mock server for NodeJs applications",
   "main": "mock-server.js",
   "scripts": {
     "test": "jest",
     "test-dev": "jest --watchAll --verbose",
     "coverage": "jest --coverage",
+    "eslint": "eslint .",
+    "coveralls": "jest --coverage && coveralls < ./coverage/lcov.info",
     "start": "node ./standalone"
   },
+  "pre-commit": "eslint",
   "repository": "github:dtobe/aietes-js",
   "author": "Tobias Ehrler <tobias_ehrler@yahoo.co.uk>",
   "contributors": [
@@ -18,7 +21,7 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "express": "^4.16.4",
+    "express": "^4.17.1",
     "fs": "^0.0.1-security",
     "lodash": "^4.17.11",
     "morgan": "^1.9.1",
@@ -26,8 +29,16 @@
     "yargs": "^13.2.4"
   },
   "devDependencies": {
-    "get-port": "^4.2.0",
-    "jest": "^24.7.1",
+    "eslint": "^5.16.0",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-plugin-import": "^2.17.2",
+    "eslint-plugin-node": "^8.0.1",
+    "eslint-plugin-promise": "^4.1.1",
+    "eslint-plugin-standard": "^4.0.0",
+    "pre-commit": "^1.2.2",
+    "coveralls": "^3.0.4",
+    "get-port": "^5.0.0",
+    "jest": "^24.8.0",
     "supertest": "^4.0.2"
   }
 }

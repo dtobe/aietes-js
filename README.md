@@ -1,7 +1,7 @@
 # aietes-js
 Express.js-based mock server for RESTful APIs inspired by Wiremock.
 
-[![Build Status](https://travis-ci.com/dtobe/aietes-js.svg?token=vnspnEo4jpC1xxuzG92q&branch=master)](https://travis-ci.com/dtobe/aietes-js)
+[![Build Status](https://travis-ci.com/dtobe/aietes-js.svg?token=vnspnEo4jpC1xxuzG92q&branch=master)](https://travis-ci.com/dtobe/aietes-js) [![Join the chat at https://gitter.im/aietes-js/community](https://badges.gitter.im/aietes-js/community.svg)](https://gitter.im/aietes-js/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![Coverage Status](https://coveralls.io/repos/github/dtobe/aietes-js/badge.svg?branch=master)](https://coveralls.io/github/dtobe/aietes-js?branch=master)
 
 ## Features
 
@@ -11,6 +11,7 @@ Express.js-based mock server for RESTful APIs inspired by Wiremock.
     - Response headers
     - JSON body
 - Set up lists of responses
+- Set a request delay (e.g. to simulate lag)
 
 ## Installation 
 To run aietes-js [Node.js](https://nodejs.org/en/download/) v10 or newer is required.
@@ -124,6 +125,29 @@ Format of an individual repsonse object.
         "field3": false
     }
 }
+```
+
+
+### Simulating delay or lag
+A delay in mock request processing can be set to simulate network lag or long running operations.
+This can be done per route and method or globally.
+#### Global delay
+Setting the delay in milliseconds:
+```javascript
+mockServer.setDelayMs(200);
+```
+Resetting the delay:
+```javascript
+mockServer.setDelayMs(0);
+```
+#### Per route and method delay
+Setting the delay in milliseconds:
+```javascript
+mockServer.setDelayMs(200, "/endpoint1", "get");
+```
+Resetting the delay:
+```javascript
+mockServer.setDelayMs(0, "/endpoint1", "get");
 ```
 
 ## Examples
