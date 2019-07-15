@@ -15,17 +15,16 @@ standalone = async () => {
         jsonResponse = JSON.parse(await fs.readFile(responseFileName, 'utf8'));
     }
 
-    const responseObject = jsonResponse || {
-        status: argv.status || 200,
-        headers: argv.headers || {},
-        data: argv.data || { hello: "Aietes"}
-    };
-    const endpoint = {
+    const response = jsonResponse || {
         "/": {
-            get: responseObject
+            get: {
+                status: 200,
+                headers: {},
+                data: { hello: "Aietes"}
+            }
         }
     };
-    const standaloneMock = new AietesServer(endpoint, port);
+    const standaloneMock = new AietesServer(response, port);
     standaloneMock.start();
 };
 
