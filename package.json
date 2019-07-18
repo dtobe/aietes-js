@@ -1,6 +1,6 @@
 {
   "name": "aietes-js",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "JSON mock server for NodeJs applications",
   "main": "mock-server.js",
   "scripts": {
@@ -21,7 +21,7 @@
   "license": "MIT",
   "dependencies": {
     "express": "^4.17.1",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.14",
     "morgan": "^1.9.1",
     "server-destroy": "^1.0.1"
   },
@@ -33,7 +33,7 @@
     "eslint-plugin-promise": "^4.1.1",
     "eslint-plugin-standard": "^4.0.0",
     "pre-commit": "^1.2.2",
-    "coveralls": "^3.0.4",
+    "coveralls": "^3.0.5",
     "get-port": "^5.0.0",
     "jest": "^24.8.0",
     "supertest": "^4.0.2"
