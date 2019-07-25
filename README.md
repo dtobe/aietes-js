@@ -34,9 +34,21 @@ $ yarn add aietes-js
 
 ## Getting Started
 
+### Standalone Usage
+To run aietes-js as a standalone application run the following command
+```bash
+$ yarn run start-standalone
+```
+Optional command-line arguments
+
+`--port=4321`  Start the server on the given port if it is free, a random free port otherwise.
+
+`--json=response.json`  A response definition file (see below): _requires the file to be in the root of your project_
+
+
 ### Programmatic Usage
 
-### Setup & Teardown
+#### Setup & Teardown
 Example usage in Jest style tests.
 ```javascript
     let mockServer;
@@ -71,7 +83,7 @@ Example usage in Jest style tests.
     mockServer.reset(newRoutesAndResponseConfiguration);
 ```
 
-### Response configuration
+#### Response configuration
 The response configuration object that needs to be passed to the AietesServer constructor, broken down here for clarity.
 ```javascript
 {
@@ -111,10 +123,11 @@ Format of an individual repsonse object.
 ```
 
 
-### Simulating delay or lag
+#### Simulating delay or lag
 A delay in mock request processing can be set to simulate network lag or long running operations.
 This can be done per route and method or globally.
-#### Global delay
+
+##### Global delay
 Setting the delay in milliseconds:
 ```javascript
 mockServer.setDelayMs(200);
@@ -123,7 +136,7 @@ Resetting the delay:
 ```javascript
 mockServer.setDelayMs(0);
 ```
-#### Per route and method delay
+##### Per route and method delay
 Setting the delay in milliseconds:
 ```javascript
 mockServer.setDelayMs(200, "/endpoint1", "get");
