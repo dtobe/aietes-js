@@ -1,31 +1,37 @@
-const getPort = require("get-port");
-const argv = require("yargs").argv;
+const getPort = require('get-port');
+const argv = require('yargs').argv;
 const fs = require('fs');
 
-const MockServer = require("../mock-server");
+const AietesServer = require('../mock-server');
 
-standalone = async () => {
+const standalone = async() => {
+  console.info('Starting Aietes standalone');
 
-    const _port = argv.port || await getPort();
-    const responseFileName = argv.json;
-    let jsonResponse;
-    if (responseFileName) {
-        jsonResponse = JSON.parse(fs.readFileSync(responseFileName, 'utf8'));
+  const port = argv.port || await getPort();
+
+  const responseFileName = argv.json;
+  let jsonResponse;
+  if (responseFileName) {
+    try {
+      jsonResponse = JSON.parse(fs.readFileSync(responseFileName, 'utf8'));
+    } catch (err) {
+      console.error(err.message);
+      console.error(`Reading response definition file '${responseFileName}' failed. Aietes exiting.`);
+      process.exit(1);
     }
+  }
+  const response = jsonResponse || {
+    '/': {
+      get: {
+        status: 200,
+        headers: {},
+        data: { hello: 'Aietes' }
+      }
+    }
+  };
 
-    const responseObject = jsonResponse || {
-        status: argv.status || 200,
-        headers: argv.headers || { "some-header": "abc-123" },
-        data: argv.data || { hello: "Aietes"}
-    };
-    const endpoint = {
-        "/": {
-            get: responseObject
-        }
-    };
-    const standaloneMock = new MockServer(endpoint, _port);
-    standaloneMock.start();
-    console.info("started standalone.");
+  const standaloneMock = new AietesServer(response, port);
+  standaloneMock.start();
 };
 
 module.exports = standalone();

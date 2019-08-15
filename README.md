@@ -1,7 +1,7 @@
 # aietes-js
 Express.js-based mock server for RESTful APIs inspired by Wiremock.
 
-[![Build Status](https://travis-ci.com/dtobe/aietes-js.svg?token=vnspnEo4jpC1xxuzG92q&branch=master)](https://travis-ci.com/dtobe/aietes-js)
+[![Build Status](https://travis-ci.com/dtobe/aietes-js.svg?token=vnspnEo4jpC1xxuzG92q&branch=master)](https://travis-ci.com/dtobe/aietes-js) [![Join the chat at https://gitter.im/aietes-js/community](https://badges.gitter.im/aietes-js/community.svg)](https://gitter.im/aietes-js/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![Coverage Status](https://coveralls.io/repos/github/dtobe/aietes-js/badge.svg?branch=master)](https://coveralls.io/github/dtobe/aietes-js?branch=master)
 
 ## Features
 
@@ -11,6 +11,7 @@ Express.js-based mock server for RESTful APIs inspired by Wiremock.
     - Response headers
     - JSON body
 - Set up lists of responses
+- Set a request delay (e.g. to simulate lag)
 
 ## Installation 
 To run aietes-js [Node.js](https://nodejs.org/en/download/) v10 or newer is required.
@@ -33,25 +34,18 @@ $ yarn add aietes-js
 
 ## Getting Started
 
-### Standalone Aietes
+### Standalone Usage
 To run aietes-js as a standalone application run the following command
 ```bash
 $ yarn run start-standalone
 ```
 Optional command-line arguments
 
-`--json=response.json` The responseObject Aietes will return when called: _requires jsonfile in the root of your project_
+`--port=4321`  Start the server on the given port if it is free, a random free port otherwise.
 
-Altenatively you can overwrite individual things such as returned status, headers and body:
+`--json=response.json`  A response definition file (see below): _requires the file to be in the root of your project_
 
-`--status=404`
-
-`--header=some-header`
-
-`--data=some-data`
-```
-
-## Standalone Docker container
+### Standalone Docker container
 The project includes a Dockerfile to create an image with a single Aietes instance. To build the image run:
 ```bash
 $ docker build .
@@ -67,7 +61,7 @@ $ docker run -p <host port>:<exposed port> <container id from build>
 
 ### Programmatic Usage
 
-### Setup & Teardown
+#### Setup & Teardown
 Example usage in Jest style tests.
 ```javascript
     let mockServer;
@@ -102,7 +96,7 @@ Example usage in Jest style tests.
     mockServer.reset(newRoutesAndResponseConfiguration);
 ```
 
-### Response configuration
+#### Response configuration
 The response configuration object that needs to be passed to the AietesServer constructor, broken down here for clarity.
 ```javascript
 {
@@ -139,6 +133,30 @@ Format of an individual repsonse object.
         "field3": false
     }
 }
+```
+
+
+#### Simulating delay or lag
+A delay in mock request processing can be set to simulate network lag or long running operations.
+This can be done per route and method or globally.
+
+##### Global delay
+Setting the delay in milliseconds:
+```javascript
+mockServer.setDelayMs(200);
+```
+Resetting the delay:
+```javascript
+mockServer.setDelayMs(0);
+```
+##### Per route and method delay
+Setting the delay in milliseconds:
+```javascript
+mockServer.setDelayMs(200, "/endpoint1", "get");
+```
+Resetting the delay:
+```javascript
+mockServer.setDelayMs(0, "/endpoint1", "get");
 ```
 
 ## Examples
