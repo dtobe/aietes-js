@@ -95,6 +95,8 @@ class AietesServer {
 
   _createHandler(path, method) {
     return async(req, res) => {
+      logParameters(req);
+
       const endPointResponse = this.responses[path][method];
       let currentResponse;
       if (Array.isArray(endPointResponse)) {
@@ -108,6 +110,25 @@ class AietesServer {
     };
   }
 }
+
+const logParameters = req => {
+  let logMessage = `Request to ${req.path}\n`;
+  if (req.params && Object.keys(req.params).length) {
+    logMessage += `Path variables${buildParameterList(req.params)}\n`;
+  }
+  if (req.query && Object.keys(req.query).length) {
+    logMessage += `Query parameters${buildParameterList(req.query)}`;
+  }
+  logMessage && console.log(logMessage);
+};
+
+const buildParameterList = params => {
+  let paramList = '';
+  Object.keys(params).forEach(key => {
+    paramList += `\n- ${key}: ${params[key]}`;
+  });
+  return paramList;
+};
 
 const createSendResponseCallback = (handlerResponse, responseData, delayMs) => {
   return async() => {
