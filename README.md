@@ -45,6 +45,19 @@ Optional command-line arguments
 
 `--json=response.json`  A response definition file (see below): _requires the file to be in the root of your project_
 
+### Standalone Docker container
+The project includes a Dockerfile to create an image with a single Aietes instance. To build the image run:
+```bash
+$ docker build .
+```
+You can optionally set your preferred port to expose and start Aietes on. The default port is 8080.
+```bash
+$ docker build  --build-arg container_port=<port> .
+```
+When starting the container, map the exposed port to a port on the host.
+```bash
+$ docker run -p <host port>:<exposed port> <container id from build>
+```
 
 ### Programmatic Usage
 

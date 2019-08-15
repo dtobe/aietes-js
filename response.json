@@ -1,9 +1,13 @@
 {
-  "status": 200,
-  "headers": {
-    "some-header": "555-666"
-  },
-  "data": {
-    "foobar": "from json file"
+  "/": {
+    "get": {
+      "status": 200,
+      "headers": {
+        "some-header": "555-666"
+      },
+      "data": {
+        "foobar": "from json file"
+      }
+    }
   }
 }
