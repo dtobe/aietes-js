@@ -4,6 +4,7 @@ const enableDestroy = require('server-destroy');
 const morgan = require('morgan');
 const unconfiguredRoutesHandler = require('./lib/errorHandler');
 const MetaData = require('./lib/metaData');
+const { info, warn } = require('./lib/logging');
 
 const SUPPORTED_METHODS = ['get', 'post', 'put', 'delete'];
 const isDebug = process.env.DEBUG || false;
@@ -22,26 +23,25 @@ class AietesServer {
   start() {
     try {
       this._listen(() => {
-        log(`Aietes server running at http://localhost:${this.serverPort}/`);
+        info(`Aietes server running at http://localhost:${this.serverPort}/`);
         return true;
       });
     } catch (e) {
-      log('Could not start Aietes server.');
+      info('Could not start Aietes server.');
       if (isDebug) {
-        log(e);
+        info(e);
       }
       process.exit(1);
     }
   }
 
   update(responses) {
-    log('Updating responses');
+    info('Updating responses');
     Object.assign(this.responses, responses);
   }
 
   reset(responses) {
-    console.log('Restarting Aietes server');
-    log('Restarting Aietes server');
+    info('Restarting Aietes server');
     this._end();
     this.responses = Object.assign({}, responses);
     this.responsesMetaData.clear();
@@ -50,7 +50,7 @@ class AietesServer {
   }
 
   stop() {
-    log('Exiting Aietes server');
+    info('Exiting Aietes server');
     this._end();
   }
 
@@ -87,7 +87,7 @@ class AietesServer {
           this.responsesMetaData.initMetaDataForHandler(path, method);
           this.app[methodForExpress](path, this._createHandler(path, method));
         } else {
-          console.warn(`Method ${method} is not supported. Path '${path}'-${method} will be skipped.`);
+          warn(`Method ${method} is not supported. Path '${path}'-${method} will be skipped.`);
         }
       });
     });
@@ -113,7 +113,7 @@ const createSendResponseCallback = (handlerResponse, responseData, delayMs) => {
   return async() => {
     const returnStatus = responseData['status'] || 200;
     if (delayMs) {
-      log(`Delaying response for ${delayMs}ms`);
+      info(`Delaying response for ${delayMs}ms`);
       await setTimeout(() => {
         handlerResponse
           .status(returnStatus)
@@ -121,19 +121,13 @@ const createSendResponseCallback = (handlerResponse, responseData, delayMs) => {
           .jsonp(responseData['data']);
       }, delayMs);
     } else {
-      log('Returning immediate response');
+      info('Returning immediate response');
       handlerResponse
         .status(returnStatus)
         .set(responseData['headers'])
         .jsonp(responseData['data']);
     }
   };
-};
-
-const log = data => {
-  if (!process.env.NO_OUTPUT) {
-    console.log(data);
-  }
 };
 
 module.exports = AietesServer;
