@@ -2,12 +2,12 @@ const express = require('express');
 const _ = require('lodash');
 const enableDestroy = require('server-destroy');
 const morgan = require('morgan');
+const log = require('./lib/log');
 const unconfiguredRoutesHandler = require('./lib/errorHandler');
 const MetaData = require('./lib/metaData');
-const { info, warn } = require('./lib/logging');
+const { info, warn, error } = require('./lib/logging');
 
 const SUPPORTED_METHODS = ['get', 'post', 'put', 'delete'];
-const isDebug = process.env.DEBUG || false;
 
 class AietesServer {
   constructor(responses, port) {
@@ -27,10 +27,8 @@ class AietesServer {
         return true;
       });
     } catch (e) {
-      info('Could not start Aietes server.');
-      if (isDebug) {
-        info(e);
-      }
+      log('Could not start Aietes server.');
+      error(e);
       process.exit(1);
     }
   }
@@ -95,6 +93,8 @@ class AietesServer {
 
   _createHandler(path, method) {
     return async(req, res) => {
+      logParameters(req);
+
       const endPointResponse = this.responses[path][method];
       let currentResponse;
       if (Array.isArray(endPointResponse)) {
@@ -108,6 +108,28 @@ class AietesServer {
     };
   }
 }
+
+const logParameters = req => {
+  let logMessage = '';
+  if (req.params && Object.keys(req.params).length) {
+    logMessage += `Path variables${buildParameterList(req.params)}\n`;
+  }
+  if (req.query && Object.keys(req.query).length) {
+    logMessage += `Query parameters${buildParameterList(req.query)}`;
+  }
+  if (logMessage) {
+    logMessage = `Request to ${req.path}\n` + logMessage;
+    log(logMessage);
+  }
+};
+
+const buildParameterList = params => {
+  let paramList = '';
+  Object.keys(params).forEach(key => {
+    paramList += `\n- ${key}: ${params[key]}`;
+  });
+  return paramList;
+};
 
 const createSendResponseCallback = (handlerResponse, responseData, delayMs) => {
   return async() => {

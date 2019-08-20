@@ -120,6 +120,19 @@ The response configuration object that needs to be passed to the AietesServer co
     }
 }
 ```
+NB some simple wildcard expressions are possible in route names (since the underlying ExpressJs server allows it).
+```javascript
+{
+    // matches all paths /endpoint1, /endpoint1/pathVariable, etc.
+    "/endpoint1(/*)?": {
+        // ...
+    },
+    // matches all paths /endpoint2/pathVariable, etc.
+    "/endpoint2/*": {
+        // ...
+    }
+}
+```
 Format of an individual repsonse object.
 ```javascript
 {

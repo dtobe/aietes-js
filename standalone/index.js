@@ -1,11 +1,12 @@
 const getPort = require('get-port');
 const argv = require('yargs').argv;
 const fs = require('fs');
+const log = require('../lib/log');
 
 const AietesServer = require('../mock-server');
 
 const standalone = async() => {
-  console.info('Starting Aietes standalone');
+  log('Starting Aietes standalone');
 
   const port = argv.port || await getPort();
 
