@@ -5,7 +5,6 @@ const getPort = require('get-port');
 describe('Aietes Server Timeout IT', () => {
   let mockServer;
   const responseObject = {
-    headers: { 'some-header': 'header value' },
     data: { field1: 1, field2: 'value' }
   };
 
