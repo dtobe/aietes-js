@@ -1,11 +1,13 @@
 sudo: false
 language: node_js
 node_js:
-- '10'
+- node
+- lts/*
+- 10
 branches:
   all_branches: true
 cache: yarn
 install:
-- yarn install
+- yarn install --frozen-lockfile
 after_script:
 - yarn coveralls
