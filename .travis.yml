@@ -4,6 +4,9 @@ node_js:
 - node
 - lts/*
 - 10
+os:
+- linux
+- osx
 branches:
   all_branches: true
 cache: yarn
