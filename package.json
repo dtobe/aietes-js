@@ -29,16 +29,16 @@
     "yargs": "^13.2.4"
   },
   "devDependencies": {
+    "coveralls": "^3.0.5",
     "eslint": "^5.16.0",
     "eslint-config-standard": "^12.0.0",
     "eslint-plugin-import": "^2.17.2",
     "eslint-plugin-node": "^8.0.1",
     "eslint-plugin-promise": "^4.1.1",
     "eslint-plugin-standard": "^4.0.0",
-    "pre-commit": "^1.2.2",
-    "coveralls": "^3.0.5",
     "get-port": "^5.0.0",
     "jest": "^24.8.0",
+    "pre-commit": "^1.2.2",
     "supertest": "^4.0.2"
   }
 }
