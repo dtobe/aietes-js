@@ -1,11 +1,9 @@
 const express = require('express');
 const _ = require('lodash');
 const enableDestroy = require('server-destroy');
-const morgan = require('morgan');
-const log = require('./lib/log');
 const unconfiguredRoutesHandler = require('./lib/errorHandler');
 const MetaData = require('./lib/metaData');
-const { info, warn, error } = require('./lib/logging');
+const { log, accessLog } = require('./lib/logging');
 
 const SUPPORTED_METHODS = ['get', 'post', 'put', 'delete'];
 
@@ -23,23 +21,23 @@ class AietesServer {
   start() {
     try {
       this._listen(() => {
-        info(`Aietes server running at http://localhost:${this.serverPort}/`);
+        log.info(`Aietes server running at http://localhost:${this.serverPort}/`);
         return true;
       });
     } catch (e) {
-      log('Could not start Aietes server.');
-      error(e);
+      log.error('Could not start Aietes server.');
+      log.error(e);
       process.exit(1);
     }
   }
 
   update(responses) {
-    info('Updating responses');
+    log.info('Updating responses');
     Object.assign(this.responses, responses);
   }
 
   reset(responses) {
-    info('Restarting Aietes server');
+    log.info('Restarting Aietes server');
     this._end();
     this.responses = Object.assign({}, responses);
     this.responsesMetaData.clear();
@@ -48,7 +46,7 @@ class AietesServer {
   }
 
   stop() {
-    info('Exiting Aietes server');
+    log.info('Exiting Aietes server');
     this._end();
   }
 
@@ -58,7 +56,7 @@ class AietesServer {
 
   _setup() {
     this.app = express();
-    this.app.use(morgan('tiny'));
+    this.app.use(accessLog);
     this.app.locals = {
       _: _
     };
@@ -85,7 +83,7 @@ class AietesServer {
           this.responsesMetaData.initMetaDataForHandler(path, method);
           this.app[methodForExpress](path, this._createHandler(path, method));
         } else {
-          warn(`Method ${method} is not supported. Path '${path}'-${method} will be skipped.`);
+          log.warn(`Method ${method} is not supported. Path '${path}'-${method} will be skipped.`);
         }
       });
     });
@@ -119,7 +117,7 @@ const logParameters = req => {
   }
   if (logMessage) {
     logMessage = `Request to ${req.path}\n` + logMessage;
-    log(logMessage);
+    log.info(logMessage);
   }
 };
 
@@ -135,7 +133,7 @@ const createSendResponseCallback = (handlerResponse, responseData, delayMs) => {
   return async() => {
     const returnStatus = responseData['status'] || 200;
     if (delayMs) {
-      info(`Delaying response for ${delayMs}ms`);
+      log.info(`Delaying response for ${delayMs}ms`);
       await setTimeout(() => {
         handlerResponse
           .status(returnStatus)
@@ -143,7 +141,7 @@ const createSendResponseCallback = (handlerResponse, responseData, delayMs) => {
           .jsonp(responseData['data']);
       }, delayMs);
     } else {
-      info('Returning immediate response');
+      log.info('Returning immediate response');
       handlerResponse
         .status(returnStatus)
         .set(responseData['headers'])

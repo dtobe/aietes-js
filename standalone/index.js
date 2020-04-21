@@ -1,12 +1,12 @@
 const getPort = require('get-port');
 const argv = require('yargs').argv;
 const fs = require('fs');
-const log = require('../lib/log');
+const { log } = require('../lib/logging');
 
 const AietesServer = require('../mock-server');
 
 const standalone = async() => {
-  log('Starting Aietes standalone');
+  log.info('Starting Aietes standalone');
 
   const port = argv.port || await getPort();
 
@@ -16,8 +16,8 @@ const standalone = async() => {
     try {
       jsonResponse = JSON.parse(fs.readFileSync(responseFileName, 'utf8'));
     } catch (err) {
-      console.error(err.message);
-      console.error(`Reading response definition file '${responseFileName}' failed. Aietes exiting.`);
+      log.error(err.message);
+      log.error(`Reading response definition file '${responseFileName}' failed. Aietes exiting.`);
       process.exit(1);
     }
   }
