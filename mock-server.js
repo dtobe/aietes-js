@@ -33,9 +33,7 @@ class AietesServer {
     log.info('Updating responses');
     const newResponses = createResponses(responsesConfig);
     newResponses.forEach((newResponse) => {
-      const existingResponse = this.responses.find((savedResponse) => {
-        return savedResponse.path === newResponse.path && savedResponse.method === newResponse.method;
-      });
+      const existingResponse = findResponse(this.responses, newResponse.path, newResponse.method);
       if (existingResponse) {
         existingResponse.update(newResponse.endPointResponse);
       }
@@ -61,11 +59,14 @@ class AietesServer {
         response.setDelayMs(delayMs);
       });
     } else {
-      const existingResponse = this.responses.find((savedResponse) => {
-        return savedResponse.path === path && savedResponse.method === method;
-      });
+      const existingResponse = findResponse(this.responses, path, method);
       existingResponse && existingResponse.setDelayMs(delayMs);
     }
+  }
+
+  verifyTimesCalled(path, method, expectedNumTimes) {
+    const response = findResponse(this.responses, path, method);
+    return response && response.verifyTimesCalled(expectedNumTimes);
   }
 
   _setup() {
@@ -108,6 +109,13 @@ const createResponses = (responsesConfig) => {
     });
   }).filter(response => {
     return response !== undefined;
+  });
+};
+
+const findResponse = (responses, path, method) => {
+  const normalizedMethod = method.toLowerCase();
+  return responses.find((savedResponse) => {
+    return savedResponse.path === path && savedResponse.method === normalizedMethod;
   });
 };
 
