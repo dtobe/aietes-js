@@ -32,12 +32,12 @@ describe('Aietes Server verify call counts IT', () => {
   });
 
   it('should evaluate to false if endpoint has not been called', async() => {
-    expect(mockServer.verifyTimesCalled('/endpoint1/', 'get', 1)).toBe(false);
+    expect(mockServer.timesCalled('/endpoint1/', 'get')).toBe(0);
   });
 
   it('should evaluate to true if endpoint was called correct number of times', async() => {
     await request(mockServer.server).get('/endpoint1/');
-    expect(mockServer.verifyTimesCalled('/endpoint1/', 'get', 1)).toBe(true);
+    expect(mockServer.timesCalled('/endpoint1/', 'get')).toBe(1);
   });
 
   it('should reset stats when resetting response config', async() => {
@@ -46,22 +46,17 @@ describe('Aietes Server verify call counts IT', () => {
     mockServer.reset(responseConfig);
 
     await request(mockServer.server).get('/endpoint1/');
-    expect(mockServer.verifyTimesCalled('/endpoint1/', 'get', 1)).toBe(true);
+    expect(mockServer.timesCalled('/endpoint1/', 'get')).toBe(1);
   });
 
   it('should ignore case of method parameter', async() => {
     await request(mockServer.server).get('/endpoint1/');
-    expect(mockServer.verifyTimesCalled('/endpoint1/', 'GET', 1)).toBe(true);
-  });
-
-  it.skip('should allow matching the endpoint to verify by regex', async() => {
-    await request(mockServer.server).get('/endpoint1/');
-    expect(mockServer.verifyTimesCalled('/endpoint1.*', 'get', 1)).toBe(true);
+    expect(mockServer.timesCalled('/endpoint1/', 'GET')).toBe(1);
   });
 
   it('should evaluate to false if endpoint was called more than the expected number of times', async() => {
     await request(mockServer.server).get('/endpoint1/');
     await request(mockServer.server).get('/endpoint1/');
-    expect(mockServer.verifyTimesCalled('/endpoint1/', 'get', 1)).toBe(false);
+    expect(mockServer.timesCalled('/endpoint1/', 'get')).not.toBe(1);
   });
 });

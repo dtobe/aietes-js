@@ -9,6 +9,7 @@ const SUPPORTED_METHODS = ['get', 'post', 'put', 'delete'];
 
 class AietesServer {
   constructor(responsesConfig, port) {
+    this.stats = {};
     this.responses = createResponses(responsesConfig);
     this.serverPort = port;
     this.app = null;
@@ -43,6 +44,7 @@ class AietesServer {
   reset(responsesConfig) {
     log.info('Restarting Aietes server');
     this._end();
+    this.stats = {};
     this.responses = createResponses(responsesConfig);
     this._setup();
     this.start();
@@ -64,9 +66,40 @@ class AietesServer {
     }
   }
 
-  verifyTimesCalled(path, method, expectedNumTimes) {
-    const response = findResponse(this.responses, path, method);
-    return response && response.verifyTimesCalled(expectedNumTimes);
+  timesCalled(pathMatcher, methodMatcher) {
+    console.log(this.stats)
+    let matchingPathStats;
+    if (typeof pathMatcher === 'function') {
+      matchingPathStats = this.stats.filter(pathMatcher);
+    } else {
+      matchingPathStats = [this.stats[pathMatcher]];
+    }
+    console.error(matchingPathStats)
+
+    let numCalls = 0;
+    if (matchingPathStats) {
+      const statList = _.flatMap(matchingPathStats, (statBlock) => {
+        console.log(statBlock)
+        return _.filter(statBlock, (stats, method) => {
+          console.log(method)
+          if (Array.isArray(methodMatcher)) {
+            return methodMatcher.map(value => value.toLowerCase()).contains(method);
+          } else {
+            return method === methodMatcher.toLowerCase();
+          }
+        })
+        .map((stats) => {
+          console.warn(stats)
+          return stats.numCalls;
+        })
+      })
+      console.log(statList)
+      numCalls = _.reduce(statList, function(sum, n) {
+        return sum + n;
+      }, 0);
+    }
+
+    return numCalls;
   }
 
   _setup() {
@@ -92,7 +125,7 @@ class AietesServer {
 
   _makeRoutes() {
     this.responses.forEach((response) => {
-      this.app[response.method](response.path, response.createHandler());
+      this.app[response.method](response.path, response.createHandler(this.stats));
     });
   }
 }
