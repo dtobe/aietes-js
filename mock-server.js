@@ -50,6 +50,12 @@ class AietesServer {
     this.start();
   }
 
+  clearStats() {
+    Object.getOwnPropertyNames(this.stats).forEach(prop => {
+      delete this.stats[prop]; // must not re-assign the object reference
+    });
+  }
+
   stop() {
     log.info('Exiting Aietes server');
     this._end();
@@ -67,33 +73,28 @@ class AietesServer {
   }
 
   timesCalled(pathMatcher, methodMatcher) {
-    console.log(this.stats)
     let matchingPathStats;
     if (typeof pathMatcher === 'function') {
       matchingPathStats = _.filter(this.stats, (statsByMethod, path) => pathMatcher(path));
     } else {
       matchingPathStats = [this.stats[pathMatcher]];
     }
-    console.error(matchingPathStats)
 
     let numCalls = 0;
     if (matchingPathStats) {
       const statList = _.flatMap(matchingPathStats, (statBlock) => {
-        console.log(statBlock)
         return _.filter(statBlock, (stats, method) => {
-          console.log(method)
           if (Array.isArray(methodMatcher)) {
             return methodMatcher.map(value => value.toLowerCase()).includes(method);
           } else {
             return method === methodMatcher.toLowerCase();
           }
         })
-        .map((stats) => {
-          console.warn(stats)
-          return stats.numCalls;
-        })
-      })
-      console.log(statList)
+          .map((stats) => {
+            return stats.numCalls;
+          });
+      });
+
       numCalls = _.reduce(statList, function(sum, n) {
         return sum + n;
       }, 0);

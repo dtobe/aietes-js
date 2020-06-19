@@ -38,6 +38,10 @@ describe('Aietes Server verify call counts IT', () => {
     expect(mockServer.timesCalled('/endpoint1/', 'get')).toBe(0);
   });
 
+  it('should handle unknown resources gracefully', () => {
+    expect(mockServer.timesCalled('/someotherendpoint/', 'get')).toBe(0);
+  });
+
   it('should evaluate to correct number of calls', async() => {
     await request(mockServer.server).get('/endpoint1/');
     expect(mockServer.timesCalled('/endpoint1/', 'get')).toBe(1);
@@ -53,7 +57,21 @@ describe('Aietes Server verify call counts IT', () => {
   it('should reset stats when resetting response config', async() => {
     await request(mockServer.server).get('/endpoint1/');
 
-    mockServer.reset(responseConfig);
+    mockServer.reset({
+      '/endpoint2/': {
+        get: {}
+      }
+    });
+
+    await request(mockServer.server).get('/endpoint2/');
+    expect(mockServer.timesCalled('/endpoint1/', 'get')).toBe(0);
+    expect(mockServer.timesCalled('/endpoint2/', 'get')).toBe(1);
+  });
+
+  it('should reset stats but not response config when calling clearStats', async() => {
+    await request(mockServer.server).get('/endpoint1/');
+
+    mockServer.clearStats();
 
     await request(mockServer.server).get('/endpoint1/');
     expect(mockServer.timesCalled('/endpoint1/', 'get')).toBe(1);
@@ -69,10 +87,6 @@ describe('Aietes Server verify call counts IT', () => {
     expect(mockServer.timesCalled('/endpoint1/', 'get')).toBe(0);
   });
 
-  it('should handle unknown resources gracefully', () => {
-    expect(mockServer.timesCalled('/someotherendpoint/', 'get')).toBe(0);
-  });
-
   it('should accept a predicate as a filter for path', async() => {
     await request(mockServer.server).get('/endpoint1/');
     await request(mockServer.server).get('/endpoint1/pathvariable');
@@ -83,5 +97,11 @@ describe('Aietes Server verify call counts IT', () => {
     await request(mockServer.server).post('/endpoint1/');
     await request(mockServer.server).get('/endpoint1/');
     expect(mockServer.timesCalled('/endpoint1/', ['get', 'post'])).toBe(2);
+  });
+
+  it('should ignore query parameters', async() => {
+    await request(mockServer.server).get('/endpoint1/');
+    await request(mockServer.server).get('/endpoint1/?param=foo');
+    expect(mockServer.timesCalled('/endpoint1/', 'get')).toBe(2);
   });
 });
