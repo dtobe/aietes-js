@@ -68,6 +68,21 @@ describe('Aietes Server verify call counts IT', () => {
     expect(mockServer.timesCalled('/endpoint2/', 'get')).toBe(1);
   });
 
+  it('should not reset stats when merely updating response config', async() => {
+    await request(mockServer.server).get('/endpoint1/');
+
+    mockServer.update({
+      '/endpoint1/': {
+        get: {
+          status: 500
+        }
+      }
+    });
+
+    await request(mockServer.server).get('/endpoint1/');
+    expect(mockServer.timesCalled('/endpoint1/', 'get')).toBe(2);
+  });
+
   it('should reset stats but not response config when calling clearStats', async() => {
     await request(mockServer.server).get('/endpoint1/');
 

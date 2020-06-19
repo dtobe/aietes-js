@@ -24,6 +24,7 @@ describe('Sample IT for the bitcoin service', () => {
 
   afterEach(() => {
     server.close();
+    externalServiceMock.clearStats();
   });
 
   afterAll(() => {
@@ -43,6 +44,7 @@ describe('Sample IT for the bitcoin service', () => {
     expect(res.status).toBe(200);
     expect(responseMarkup).toBeTruthy();
     expect(responseMarkup).toContain('{"btcPrice":{"up":"5148.82"}}');
+    expect(externalServiceMock.timesCalled('/api/currentprice', 'get')).toBe(1);
   });
 
   it('should return 200 and display DOWN if Bitcoin price is below $5000', async() => {
@@ -54,5 +56,6 @@ describe('Sample IT for the bitcoin service', () => {
     expect(res.status).toBe(200);
     expect(responseMarkup).toBeTruthy();
     expect(responseMarkup).toContain('{"btcPrice":{"down":"4148.82"}}');
+    expect(externalServiceMock.timesCalled('/api/currentprice', 'get')).toBe(1);
   });
 });
