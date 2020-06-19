@@ -70,7 +70,7 @@ class AietesServer {
     console.log(this.stats)
     let matchingPathStats;
     if (typeof pathMatcher === 'function') {
-      matchingPathStats = this.stats.filter(pathMatcher);
+      matchingPathStats = _.filter(this.stats, (statsByMethod, path) => pathMatcher(path));
     } else {
       matchingPathStats = [this.stats[pathMatcher]];
     }
@@ -83,7 +83,7 @@ class AietesServer {
         return _.filter(statBlock, (stats, method) => {
           console.log(method)
           if (Array.isArray(methodMatcher)) {
-            return methodMatcher.map(value => value.toLowerCase()).contains(method);
+            return methodMatcher.map(value => value.toLowerCase()).includes(method);
           } else {
             return method === methodMatcher.toLowerCase();
           }

@@ -10,6 +10,9 @@ const responseConfig = {
   },
   '/endpoint1/': {
     get: {
+      status: 204
+    },
+    post: {
       status: 201
     }
   }
@@ -31,13 +34,20 @@ describe('Aietes Server verify call counts IT', () => {
     mockServer.stop();
   });
 
-  it('should evaluate to false if endpoint has not been called', async() => {
+  it('should evaluate to 0 if endpoint has not been called', () => {
     expect(mockServer.timesCalled('/endpoint1/', 'get')).toBe(0);
   });
 
-  it('should evaluate to true if endpoint was called correct number of times', async() => {
+  it('should evaluate to correct number of calls', async() => {
     await request(mockServer.server).get('/endpoint1/');
     expect(mockServer.timesCalled('/endpoint1/', 'get')).toBe(1);
+
+    await request(mockServer.server).get('/endpoint1/');
+    expect(mockServer.timesCalled('/endpoint1/', 'get')).toBe(2);
+
+    await request(mockServer.server).get('/endpoint1/');
+    await request(mockServer.server).get('/endpoint1/');
+    expect(mockServer.timesCalled('/endpoint1/', 'get')).toBe(4);
   });
 
   it('should reset stats when resetting response config', async() => {
@@ -54,9 +64,24 @@ describe('Aietes Server verify call counts IT', () => {
     expect(mockServer.timesCalled('/endpoint1/', 'GET')).toBe(1);
   });
 
-  it('should evaluate to false if endpoint was called more than the expected number of times', async() => {
+  it('should ignore only return the number of calls to the given resource', async() => {
+    await request(mockServer.server).get('/endpoint1/pathvariable');
+    expect(mockServer.timesCalled('/endpoint1/', 'get')).toBe(0);
+  });
+
+  it('should handle unknown resources gracefully', () => {
+    expect(mockServer.timesCalled('/someotherendpoint/', 'get')).toBe(0);
+  });
+
+  it('should accept a predicate as a filter for path', async() => {
     await request(mockServer.server).get('/endpoint1/');
+    await request(mockServer.server).get('/endpoint1/pathvariable');
+    expect(mockServer.timesCalled(path => { return path.startsWith('/endpoint'); }, 'get')).toBe(2);
+  });
+
+  it('should accept a list of HTTP methods as a filter for method', async() => {
+    await request(mockServer.server).post('/endpoint1/');
     await request(mockServer.server).get('/endpoint1/');
-    expect(mockServer.timesCalled('/endpoint1/', 'get')).not.toBe(1);
+    expect(mockServer.timesCalled('/endpoint1/', ['get', 'post'])).toBe(2);
   });
 });
