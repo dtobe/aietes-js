@@ -12,6 +12,7 @@ Express.js-based mock server for RESTful APIs inspired by Wiremock.
     - JSON body
 - Set up lists of responses
 - Set a request delay (e.g. to simulate lag)
+- Query number of calls for assertions
 
 ## Installation 
 To run aietes-js [Node.js](https://nodejs.org/en/download/) v10 or newer is required.
@@ -172,8 +173,32 @@ Resetting the delay:
 mockServer.setDelayMs(0, "/endpoint1", "get");
 ```
 
+#### Assertions
+To facilitate assertions the Aietes server instance offers an API to query the number of calls to the combination of endpoint and HTTP method.
+In its simplest form the query takes two string arguments:
+```javascript
+mockServer.timesCalled('/endpoint1/', 'get')
+```
+* Note: Even though NodeJs routes are by default not case-sensitive and ignore the trailing '/', this is *not* true of the Aietes server.  
+i.E. `mockServer.timesCalled('/endpoint1/', 'get')` != `mockServer.timesCalled('/endpoint1', 'get')`  
+and `mockServer.timesCalled('/ENDpoint1/', 'get')` != `mockServer.timesCalled('/endPOINT1/', 'get')`  
+
+The first argument may also be a single-argument predicate to filter by:
+```javascript
+mockServer.timesCalled(path => { return path.startsWith('/endpoint'); }, 'get')
+```
+The second argument may also be a list of HTTP methods:
+```javascript
+mockServer.timesCalled('/endpoint1/', ['get', 'post'])
+```
+The clear the number of calls:
+```javascript
+mockServer.clearStats()
+```
+* Note: stats are also cleared when the response config is reset. They are left unchanged on update.
+
 ## Examples
-A complete example project including the above can be found in the `samples` directory of the project.
+A complete example project including the above can be found in the `/example` directory of the project.
 
 ## Contact
 [Issues, bugs and feature requests](https://github.com/dtobe/aietes-js/projects/1)
