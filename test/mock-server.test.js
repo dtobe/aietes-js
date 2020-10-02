@@ -103,10 +103,10 @@ describe('AietesServer IT', () => {
     expect(res.body.error.message).toMatch('Route /unconfiguredroute and method GET are not configured.');
   });
 
-  it('mock responds with 404 for unsuppored operation (e.g. PATCH)', async() => {
-    const res = await request(mockServer.server).patch('/endpoint1');
+  it('mock responds with 404 for unsuppored operation (e.g. TRACE)', async() => {
+    const res = await request(mockServer.server).trace('/endpoint1');
     expect(res.status).toBe(404);
-    expect(res.body.error.message).toMatch('Route /endpoint1 and method PATCH are not configured.');
+    expect(res.body.error.message).toMatch('Route /endpoint1 and method TRACE are not configured.');
   });
 
   it('should ignore capitalization of method keys', async() => {

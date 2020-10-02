@@ -2,10 +2,9 @@ const express = require('express');
 const _ = require('lodash');
 const enableDestroy = require('server-destroy');
 const unconfiguredRoutesHandler = require('./lib/errorHandler');
+const validateResponses = require('./lib/configValidator');
 const ResponseConfig = require('./lib/response');
 const { log, accessLog } = require('./lib/logging');
-
-const SUPPORTED_METHODS = ['get', 'post', 'put', 'delete'];
 
 class AietesServer {
   constructor(responsesConfig, port) {
@@ -135,10 +134,11 @@ const createResponses = (responsesConfig) => {
   return _.flatMap(responsesConfig, (responsesByMethod, path) => {
     return _.map(responsesByMethod, (responses, method) => {
       const methodForExpress = method.toLowerCase();
-      if (SUPPORTED_METHODS.includes(methodForExpress)) {
+      try {
+        validateResponses(responses, path, methodForExpress);
         return new ResponseConfig(path, methodForExpress, responses);
-      } else {
-        log.warn(`Method ${method} is not supported. Path '${path}'-${method} will be skipped.`);
+      } catch (error) {
+        log.warn(error);
       }
     });
   }).filter(response => {
