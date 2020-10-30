@@ -207,4 +207,47 @@ describe('AietesServer IT', () => {
 
     expect(res.status).toBe(404);
   });
+
+  describe('Configuration errors', () => {
+    // TBD would be nice to test but terminates jest
+    // it('Aietes server exits cleanly if an error is thrown at startup (port not given)', () => {
+    //   const mockServer = new AietesServer(
+    //     {
+    //       '/new-endpoint': {
+    //         get: {
+    //           status: 200
+    //         }
+    //       }
+    //     },
+    //     undefined
+    //   );
+    //   mockServer.start();
+    //   expect(mockServer.server).toBeFalsy();
+    // });
+
+    it('Badly configured endpoints are skipped and server startup continues', async() => {
+      const mockServer = new AietesServer(
+        {
+          '/faulty-endpoint': {
+            get: {
+              status: '200'
+            }
+          },
+          '/endpoint2': {
+            get: {}
+          }
+        },
+        await getPort()
+      );
+      mockServer.start();
+
+      expect(mockServer.server).toBeTruthy();
+      let res = await request(mockServer.server).get('/faulty-endpoint');
+      expect(res.status).toBe(404);
+      res = await request(mockServer.server).get('/endpoint2');
+      expect(res.status).toBe(200);
+
+      mockServer.stop();
+    });
+  });
 });

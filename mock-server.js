@@ -80,24 +80,22 @@ class AietesServer {
     }
 
     let numCalls = 0;
-    if (matchingPathStats) {
-      const statList = _.flatMap(matchingPathStats, (statBlock) => {
-        return _.filter(statBlock, (stats, method) => {
-          if (Array.isArray(methodMatcher)) {
-            return methodMatcher.map(value => value.toLowerCase()).includes(method);
-          } else {
-            return method === methodMatcher.toLowerCase();
-          }
-        })
-          .map((stats) => {
-            return stats.numCalls;
-          });
-      });
+    const statList = _.flatMap(matchingPathStats, (statBlock) => {
+      return _.filter(statBlock, (stats, method) => {
+        if (Array.isArray(methodMatcher)) {
+          return methodMatcher.map(value => value.toLowerCase()).includes(method);
+        } else {
+          return method === methodMatcher.toLowerCase();
+        }
+      })
+        .map((stats) => {
+          return stats.numCalls;
+        });
+    });
 
-      numCalls = _.reduce(statList, function(sum, n) {
-        return sum + n;
-      }, 0);
-    }
+    numCalls = _.reduce(statList, function(sum, n) {
+      return sum + n;
+    }, 0);
 
     return numCalls;
   }
@@ -138,7 +136,7 @@ const createResponses = (responsesConfig) => {
         validateResponses(responses, path, methodForExpress);
         return new ResponseConfig(path, methodForExpress, responses);
       } catch (error) {
-        log.warn(error);
+        log.warn(`${error.message} ${methodForExpress}::${path} skipped`);
       }
     });
   }).filter(response => {
