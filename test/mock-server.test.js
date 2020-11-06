@@ -103,10 +103,10 @@ describe('AietesServer IT', () => {
     expect(res.body.error.message).toMatch('Route /unconfiguredroute and method GET are not configured.');
   });
 
-  it('mock responds with 404 for unsuppored operation (e.g. PATCH)', async() => {
-    const res = await request(mockServer.server).patch('/endpoint1');
+  it('mock responds with 404 for unsuppored operation (e.g. TRACE)', async() => {
+    const res = await request(mockServer.server).trace('/endpoint1');
     expect(res.status).toBe(404);
-    expect(res.body.error.message).toMatch('Route /endpoint1 and method PATCH are not configured.');
+    expect(res.body.error.message).toMatch('Route /endpoint1 and method TRACE are not configured.');
   });
 
   it('should ignore capitalization of method keys', async() => {
@@ -206,5 +206,48 @@ describe('AietesServer IT', () => {
     res = await request(mockServer.server).get('/endpoint1');
 
     expect(res.status).toBe(404);
+  });
+
+  describe('Configuration errors', () => {
+    // TBD would be nice to test but terminates jest
+    // it('Aietes server exits cleanly if an error is thrown at startup (port not given)', () => {
+    //   const mockServer = new AietesServer(
+    //     {
+    //       '/new-endpoint': {
+    //         get: {
+    //           status: 200
+    //         }
+    //       }
+    //     },
+    //     undefined
+    //   );
+    //   mockServer.start();
+    //   expect(mockServer.server).toBeFalsy();
+    // });
+
+    it('Badly configured endpoints are skipped and server startup continues', async() => {
+      const mockServer = new AietesServer(
+        {
+          '/faulty-endpoint': {
+            get: {
+              status: '200'
+            }
+          },
+          '/endpoint2': {
+            get: {}
+          }
+        },
+        await getPort()
+      );
+      mockServer.start();
+
+      expect(mockServer.server).toBeTruthy();
+      let res = await request(mockServer.server).get('/faulty-endpoint');
+      expect(res.status).toBe(404);
+      res = await request(mockServer.server).get('/endpoint2');
+      expect(res.status).toBe(200);
+
+      mockServer.stop();
+    });
   });
 });

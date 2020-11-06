@@ -2,10 +2,9 @@ const express = require('express');
 const _ = require('lodash');
 const enableDestroy = require('server-destroy');
 const unconfiguredRoutesHandler = require('./lib/errorHandler');
+const validateResponses = require('./lib/configValidator');
 const ResponseConfig = require('./lib/response');
 const { log, accessLog } = require('./lib/logging');
-
-const SUPPORTED_METHODS = ['get', 'post', 'put', 'delete'];
 
 class AietesServer {
   constructor(responsesConfig, port) {
@@ -81,24 +80,22 @@ class AietesServer {
     }
 
     let numCalls = 0;
-    if (matchingPathStats) {
-      const statList = _.flatMap(matchingPathStats, (statBlock) => {
-        return _.filter(statBlock, (stats, method) => {
-          if (Array.isArray(methodMatcher)) {
-            return methodMatcher.map(value => value.toLowerCase()).includes(method);
-          } else {
-            return method === methodMatcher.toLowerCase();
-          }
-        })
-          .map((stats) => {
-            return stats.numCalls;
-          });
-      });
+    const statList = _.flatMap(matchingPathStats, (statBlock) => {
+      return _.filter(statBlock, (stats, method) => {
+        if (Array.isArray(methodMatcher)) {
+          return methodMatcher.map(value => value.toLowerCase()).includes(method);
+        } else {
+          return method === methodMatcher.toLowerCase();
+        }
+      })
+        .map((stats) => {
+          return stats.numCalls;
+        });
+    });
 
-      numCalls = _.reduce(statList, function(sum, n) {
-        return sum + n;
-      }, 0);
-    }
+    numCalls = _.reduce(statList, function(sum, n) {
+      return sum + n;
+    }, 0);
 
     return numCalls;
   }
@@ -135,10 +132,11 @@ const createResponses = (responsesConfig) => {
   return _.flatMap(responsesConfig, (responsesByMethod, path) => {
     return _.map(responsesByMethod, (responses, method) => {
       const methodForExpress = method.toLowerCase();
-      if (SUPPORTED_METHODS.includes(methodForExpress)) {
+      try {
+        validateResponses(responses, path, methodForExpress);
         return new ResponseConfig(path, methodForExpress, responses);
-      } else {
-        log.warn(`Method ${method} is not supported. Path '${path}'-${method} will be skipped.`);
+      } catch (error) {
+        log.warn(`${error.message} ${methodForExpress}::${path} skipped`);
       }
     });
   }).filter(response => {

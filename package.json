@@ -1,6 +1,6 @@
 {
   "name": "aietes-js",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "JSON mock server for NodeJs applications",
   "main": "mock-server.js",
   "scripts": {
@@ -21,12 +21,13 @@
   ],
   "license": "MIT",
   "dependencies": {
+    "ajv": "^6.12.4",
     "express": "^4.17.1",
     "fs": "^0.0.1-security",
     "lodash": "^4.17.14",
     "morgan": "^1.9.1",
     "server-destroy": "^1.0.1",
-    "yargs": "^13.2.4"
+    "yargs": "^16.1.0"
   },
   "devDependencies": {
     "coveralls": "^3.0.5",
@@ -39,6 +40,6 @@
     "get-port": "^5.0.0",
     "jest": "^24.8.0",
     "pre-commit": "^1.2.2",
-    "supertest": "^4.0.2"
+    "supertest": "^6.0.0"
   }
 }
