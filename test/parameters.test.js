@@ -1,12 +1,12 @@
-const request = require('supertest');
-const AietesServer = require('../mock-server');
-const getPort = require('get-port');
+const request = require('supertest')
+const AietesServer = require('../mock-server')
+const getPort = require('get-port')
 
 describe('Aietes Server Timeout IT', () => {
-  let mockServer;
+  let mockServer
   const responseObject = {
     data: { field1: 1, field2: 'value' }
-  };
+  }
 
   beforeAll(async() => {
     mockServer = new AietesServer(
@@ -27,43 +27,43 @@ describe('Aietes Server Timeout IT', () => {
         }
       },
       await getPort()
-    );
+    )
 
-    mockServer.start();
-  });
+    mockServer.start()
+  })
 
   afterAll(() => {
-    mockServer.stop();
-  });
+    mockServer.stop()
+  })
 
   it('should allow path variables in mock config and match the correct route', async() => {
-    const response = await request(mockServer.server).get('/endpoint1/pathValue');
-    expect(response.status).toEqual(200);
-    expect(response.body).toMatchObject({ field1: 1, field2: 'value' });
-  });
+    const response = await request(mockServer.server).get('/endpoint1/pathValue')
+    expect(response.status).toEqual(200)
+    expect(response.body).toMatchObject({ field1: 1, field2: 'value' })
+  })
 
   it('should require path variables to match in number', async() => {
-    const response = await request(mockServer.server).get('/endpoint1/pathValue/otherValue123');
-    expect(response.status).toEqual(404);
-  });
+    const response = await request(mockServer.server).get('/endpoint1/pathValue/otherValue123')
+    expect(response.status).toEqual(404)
+  })
 
   it('should ignore query parameters', async() => {
-    const response = await request(mockServer.server).get('/endpoint1/pathValue?queryParam=queryValue');
-    expect(response.status).toEqual(200);
-    expect(response.body).toMatchObject({ field1: 1, field2: 'value' });
-  });
+    const response = await request(mockServer.server).get('/endpoint1/pathValue?queryParam=queryValue')
+    expect(response.status).toEqual(200)
+    expect(response.body).toMatchObject({ field1: 1, field2: 'value' })
+  })
 
   it.each([
     '/endpoint2', '/endpoint2/pathValue', '/endpoint2/pathValue1/pathValue2'
   ])('should recognise wildcard expression in a route and match all paths %s', async(path) => {
-    const response = await request(mockServer.server).get(path);
-    expect(response.status).toEqual(200);
-  });
+    const response = await request(mockServer.server).get(path)
+    expect(response.status).toEqual(200)
+  })
 
   it.each([
     '/endpoint3/pathValue', '/endpoint3/pathValue1/pathValue2'
   ])('should recognise simple wildcard * in a route and match all paths %s', async(path) => {
-    const response = await request(mockServer.server).get(path);
-    expect(response.status).toEqual(200);
-  });
-});
+    const response = await request(mockServer.server).get(path)
+    expect(response.status).toEqual(200)
+  })
+})
