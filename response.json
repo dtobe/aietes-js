@@ -3,10 +3,13 @@
     "get": {
       "status": 200,
       "headers": {
-        "some-header": "555-666"
+        "some-header": "some-header-value"
       },
       "data": {
-        "foobar": "from json file"
+        "some-response-key": "some response value"
+      },
+      "meta": {
+        "delayMs": 50
       }
     }
   }

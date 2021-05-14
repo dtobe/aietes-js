@@ -60,7 +60,7 @@ class AietesServer {
     this._end()
   }
 
-  setDelayMs(delayMs, path, method) {
+  setDelayMs(delayMs = null, path = undefined, method = undefined) {
     if (!(path && method)) {
       this.responses.forEach((response) => {
         response.setDelayMs(delayMs)

@@ -11,7 +11,7 @@ declare class AietesServer {
   reset(responsesConfig: AietesServer.ResponsesConfig): void
   clearStats(): void
   stop(): void
-  setDelayMs(delayMs: number, path: string, method: string): void
+  setDelayMs(delayMs?: number, path?: string, method?: string): void
   timesCalled(pathMatcher: string | ((path: string) => boolean), methodMatcher: string | string[]): number
 
 }
@@ -22,7 +22,10 @@ declare namespace AietesServer {
       [method in 'get' | 'post' | 'put' | 'delete' | 'patch']: {
         status?: number,
         headers?: object,
-        data?: object
+        data?: object,
+        meta?: {
+          delayMs?: number
+        }
       }
     }
   }
