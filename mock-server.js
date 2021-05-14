@@ -123,6 +123,7 @@ class AietesServer {
 
   _makeRoutes() {
     this.responses.forEach((response) => {
+      log.info(`Creating route handler for ${response.method} ${response.path}`)
       this.app[response.method](response.path, response.createHandler(this.stats))
     })
   }
