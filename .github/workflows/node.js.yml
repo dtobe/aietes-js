@@ -44,3 +44,17 @@ jobs:
         node-version: ${{ matrix.node_version }}
     - run: yarn --frozen-lockfile
     - run: yarn test
+
+  coverage:
+    runs-on: ubuntu-latest
+    name: Coveralls
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v2
+      with:
+        node-version: 12
+    - run: yarn --frozen-lockfile
+    - run: yarn coverage
+    - uses: coverallsapp/github-action@v1.1.2
+      with:
+        github-token: ${{secrets.GITHUB_TOKEN}}
