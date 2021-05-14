@@ -19,7 +19,7 @@ jobs:
     - uses: actions/setup-node@v2
       with:
         node-version: 12
-    - uses: mrdivyansh/eslint-action@1.0.7
+    - uses: mrdivyansh/eslint-action@v1.0.7
       with:
         repo-token: ${{secrets.GITHUB_TOKEN}}
         eslint-rc: .eslintrc.yml
