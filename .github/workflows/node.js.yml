@@ -10,6 +10,20 @@ on:
     branches: [ master ]
 
 jobs:
+  lint:
+    if: ${{ github.event_name == 'pull_request' }}
+    runs-on: ubuntu-latest
+    name: ESLint
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v2
+      with:
+        node-version: 12
+    - uses: mrdivyansh/eslint-action@1.0.7
+      with:
+        repo-token: ${{secrets.GITHUB_TOKEN}}
+        eslint-rc: .eslintrc.yml
+
   build:
     runs-on: ${{ matrix.os }}
 
