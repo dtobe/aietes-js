@@ -5,9 +5,17 @@ updates:
     directory: "/"
     schedule:
       interval: "monthly"
+    reviewers:
+      - "dtobe"
+      - "jonnunezalvarez"
 
   # --- Root
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
+    allow:
+      - dependency-type: "production"
+    reviewers:
+      - "dtobe"
+      - "jonnunezalvarez"
