@@ -40,9 +40,6 @@ yarn.lock
 .vscode/
 .idea/
 
-# Build configuration
-.travis.yml
-
 # github templates
 .github/
 
