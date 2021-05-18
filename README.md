@@ -41,13 +41,13 @@ $ yarn add aietes-js
 ### Standalone Usage
 To run aietes-js as a standalone application run the following command
 ```bash
-$ yarn run start-standalone
+$ yarn run start
 ```
 Optional command-line arguments
 
 `--port=4321`  Start the server on the given port if it is free, a random free port otherwise.
 
-`--json=response.json`  A response definition file (see below): _requires the file to be in the root of your project_
+`--json=response.json`  Absolute or relative path to a response definition file (see below)
 
 ### Standalone Docker container
 The project includes a Dockerfile to create an image with a single Aietes instance. To build the image run:
@@ -137,7 +137,7 @@ NB some simple wildcard expressions are possible in route names (since the under
     }
 }
 ```
-Format of an individual repsonse object.
+Format of an individual response object.
 ```javascript
 {
     status: 201,
@@ -166,6 +166,10 @@ Resetting the delay:
 ```javascript
 mockServer.setDelayMs(0);
 ```
+or
+```javascript
+mockServer.setDelayMs();
+```
 ##### Per route and method delay
 Setting the delay in milliseconds:
 ```javascript
@@ -173,7 +177,22 @@ mockServer.setDelayMs(200, "/endpoint1", "get");
 ```
 Resetting the delay:
 ```javascript
-mockServer.setDelayMs(0, "/endpoint1", "get");
+mockServer.setDelayMs(null, "/endpoint1", "get");
+```
+
+##### Including the delay in the response config
+This will _only_ take effect for this request/response pair, meaning if it is part of a list of responses the delay will only be applied to the response with `meta` block.
+
+A delay configured in this way can be overridden by using one of the above calls to set a global or per-route delay.
+```javascript
+{
+    status: ...,
+    headers: ...,
+    data: ...,
+    meta: {
+      delayMs: 200
+    }
+}
 ```
 
 #### Assertions

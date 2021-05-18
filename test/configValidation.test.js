@@ -47,7 +47,8 @@ describe('response config validation', () => {
       const validResponseObject = {
         status: 201,
         headers: { 'some-header': 'foo', 'some-other-header': 'bar' },
-        data: { field1: 1, field2: 'value', field3: false }
+        data: { field1: 1, field2: 'value', field3: false },
+        meta: { delayMs: 50 }
       }
       expect(() => validateResponseConfig(validResponseObject, '/foo', 'get')).not.toThrow()
     })
@@ -77,6 +78,16 @@ describe('response config validation', () => {
       }
       expect(() => validateResponseConfig(validResponseObject, '/foo', 'get'))
         .toThrow('Validation error: \'.data\' should be object')
+    })
+
+    it('throws error for invalid response meta config', () => {
+      const validResponseObject = {
+        status: 201,
+        data: { field1: 1, field2: 'value', field3: false },
+        meta: { delayMs: '50ms' }
+      }
+      expect(() => validateResponseConfig(validResponseObject, '/foo', 'get'))
+        .toThrow('Validation error: \'.meta.delayMs\' should be integer')
     })
   })
 })

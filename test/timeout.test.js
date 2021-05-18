@@ -14,6 +14,17 @@ describe('Aietes Server Timeout IT', () => {
       {
         '/endpoint1': {
           get: responseObject
+        },
+        '/endpoint2': {
+          get: [{
+            ...responseObject,
+            meta: {
+              delayMs: 200
+            }
+          },
+          {
+            ...responseObject
+          }]
         }
       },
       await getPort()
@@ -27,8 +38,8 @@ describe('Aietes Server Timeout IT', () => {
   })
 
   afterEach(() => {
-    mockServer.setDelayMs(0)
-    mockServer.setDelayMs(0, '/endpoint1', 'get')
+    mockServer.setDelayMs()
+    mockServer.setDelayMs(null, '/endpoint1', 'get')
   })
 
   it('should allow configuring delay globally', async(done) => {
@@ -53,6 +64,54 @@ describe('Aietes Server Timeout IT', () => {
     }
   })
 
+  it('should read delay per request from the config', async(done) => {
+    // first request for route has a configured timeout
+    try {
+      await request(mockServer.server).get('/endpoint2').timeout(190)
+      done.fail('Request did not time out')
+    } catch (error) {
+      expect(error.code).toEqual('ECONNABORTED')
+    }
+
+    // second request for route has no timeout
+    const res = await request(mockServer.server).get('/endpoint2').timeout(50)
+    expect(res.status).toBe(200)
+
+    done()
+  })
+
+  it('should override delay read from the config with delay set programmatically', async(done) => {
+    // override configured delay extending it by 100ms
+    mockServer.setDelayMs(300, '/endpoint2', 'get')
+    try {
+      await request(mockServer.server).get('/endpoint2').timeout(290)
+      done.fail('1st request did not time out')
+    } catch (error) {
+      expect(error.code).toEqual('ECONNABORTED')
+    }
+
+    // second request now also times out
+    try {
+      await request(mockServer.server).get('/endpoint2').timeout(290)
+      done.fail('2nd request did not time out')
+    } catch (error) {
+      expect(error.code).toEqual('ECONNABORTED')
+    }
+
+    done()
+  })
+
+  it('should override delay read from the config with delay set programmatically', async(done) => {
+    // override configured delay to remove it
+    mockServer.setDelayMs(0, '/endpoint2', 'get')
+    const res = await request(mockServer.server).get('/endpoint2').timeout(50)
+    expect(res.status).toBe(200)
+
+    // second request
+    await request(mockServer.server).get('/endpoint2')
+    done()
+  })
+
   it('should reset the global delay correctly', async(done) => {
     mockServer.setDelayMs(500)
     try {
@@ -62,7 +121,7 @@ describe('Aietes Server Timeout IT', () => {
       expect(error.code).toEqual('ECONNABORTED')
     }
 
-    mockServer.setDelayMs(0)
+    mockServer.setDelayMs()
     const res = await request(mockServer.server).get('/endpoint1').timeout(100)
     expect(res.status).toBe(200)
 
@@ -78,7 +137,7 @@ describe('Aietes Server Timeout IT', () => {
       expect(error.code).toEqual('ECONNABORTED')
     }
 
-    mockServer.setDelayMs(0, '/endpoint1', 'get')
+    mockServer.setDelayMs(null, '/endpoint1', 'get')
     const res = await request(mockServer.server).get('/endpoint1').timeout(100)
     expect(res.status).toBe(200)
 
