@@ -19,10 +19,12 @@ jobs:
     - uses: actions/setup-node@v2
       with:
         node-version: 12
-    - uses: mrdivyansh/eslint-action@v1.0.7
+    - run: yarn --frozen-lockfile
+    - run: yarn lint-report
+    - uses: ataylorme/eslint-annotate-action@1.2.0
       with:
-        repo-token: ${{secrets.GITHUB_TOKEN}}
-        eslint-rc: .eslintrc.yml
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        report-json: "eslint_report.json"
 
   build:
     runs-on: ${{ matrix.os }}

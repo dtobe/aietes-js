@@ -9,6 +9,7 @@
     "test-dev": "jest --watchAll --verbose",
     "coverage": "jest --coverage",
     "lint": "eslint .",
+    "lint-report": "eslint . --output-file eslint_report.json --format json",
     "coveralls": "jest --coverage && coveralls < ./coverage/lcov.info",
     "start": "node ./standalone"
   },
