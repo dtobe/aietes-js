@@ -29,7 +29,7 @@
     "lodash": "^4.17.14",
     "morgan": "^1.9.1",
     "server-destroy": "^1.0.1",
-    "yargs": "^16.1.0"
+    "yargs": "^17.1.0"
   },
   "devDependencies": {
     "coveralls": "^3.0.5",
