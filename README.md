@@ -196,6 +196,7 @@ A delay configured in this way can be overridden by using one of the above calls
 ```
 
 #### Assertions
+##### Call count
 To facilitate assertions the Aietes server instance offers an API to query the number of calls to the combination of endpoint and HTTP method.
 In its simplest form the query takes two string arguments:
 ```javascript
@@ -213,7 +214,26 @@ The second argument may also be a list of HTTP methods:
 ```javascript
 mockServer.timesCalled('/endpoint1/', ['get', 'post'])
 ```
-The clear the number of calls:
+
+##### Query parameters
+The Aietes server instances also offers an API call to obtain the query parameters passed to the mock on a per call basis.
+The matching of calls is stricter since parameters can only apply to a single call, so only the exact strings for path and method are allowed.
+Assuming a call to the mock endpoint such as
+```
+GET /endpoint1/?param1=foo&param2=bar&param3=42
+```
+a call to
+```javascript
+mockServer.queryParameters('/endpoint1/', 'get')
+```
+will return a list of objects with the single element
+```
+{ param1: 'foo', param2: 'bar', param3: '42' }
+```
+Objects for further calls are appended to this list.
+
+##### Clearing stats
+To clear the call stats:
 ```javascript
 mockServer.clearStats()
 ```
