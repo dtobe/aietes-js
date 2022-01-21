@@ -18,7 +18,7 @@ const responseConfig = {
   }
 }
 
-describe('Aietes Server verify call counts IT', () => {
+describe('Aietes Server verify call stats IT', () => {
   let mockServer
 
   beforeEach(async() => {
@@ -34,28 +34,79 @@ describe('Aietes Server verify call counts IT', () => {
     mockServer.stop()
   })
 
-  it('should evaluate to 0 if endpoint has not been called', () => {
-    expect(mockServer.timesCalled('/endpoint1/', 'get')).toBe(0)
+  describe('Verify call counts', () => {
+    it('should evaluate to 0 if endpoint has not been called', () => {
+      expect(mockServer.timesCalled('/endpoint1/', 'get')).toBe(0)
+    })
+
+    it('should handle unknown resources gracefully', () => {
+      expect(mockServer.timesCalled('/someotherendpoint/', 'get')).toBe(0)
+    })
+
+    it('should evaluate to correct number of calls', async() => {
+      await request(mockServer.server).get('/endpoint1/')
+      expect(mockServer.timesCalled('/endpoint1/', 'get')).toBe(1)
+
+      await request(mockServer.server).get('/endpoint1/')
+      expect(mockServer.timesCalled('/endpoint1/', 'get')).toBe(2)
+
+      await request(mockServer.server).get('/endpoint1/')
+      await request(mockServer.server).get('/endpoint1/')
+      expect(mockServer.timesCalled('/endpoint1/', 'get')).toBe(4)
+    })
+
+    it('should ignore case of method parameter', async() => {
+      await request(mockServer.server).get('/endpoint1/')
+      expect(mockServer.timesCalled('/endpoint1/', 'GET')).toBe(1)
+    })
+
+    it('should ignore only return the number of calls to the given resource', async() => {
+      await request(mockServer.server).get('/endpoint1/pathvariable')
+      expect(mockServer.timesCalled('/endpoint1/', 'get')).toBe(0)
+    })
+
+    it('should accept a predicate as a filter for path', async() => {
+      await request(mockServer.server).get('/endpoint1/')
+      await request(mockServer.server).get('/endpoint1/pathvariable')
+      expect(mockServer.timesCalled(path => { return path.startsWith('/endpoint') }, 'get')).toBe(2)
+    })
+
+    it('should accept a list of HTTP methods as a filter for method', async() => {
+      await request(mockServer.server).post('/endpoint1/')
+      await request(mockServer.server).get('/endpoint1/')
+      expect(mockServer.timesCalled('/endpoint1/', ['get', 'post'])).toBe(2)
+    })
+
+    it('should ignore query parameters', async() => {
+      await request(mockServer.server).get('/endpoint1/')
+      await request(mockServer.server).get('/endpoint1/?param=foo')
+      expect(mockServer.timesCalled('/endpoint1/', 'get')).toBe(2)
+    })
   })
 
-  it('should handle unknown resources gracefully', () => {
-    expect(mockServer.timesCalled('/someotherendpoint/', 'get')).toBe(0)
-  })
+  describe('Verify call arguments', () => {
+    it('should return query parameters per call', async() => {
+      await request(mockServer.server).get('/endpoint1/?param1=foo&param2=bar&param3=666')
+      expect(mockServer.queryParameters('/endpoint1/', 'get').length).toEqual(1)
+      expect(mockServer.queryParameters('/endpoint1/', 'get')[0]).toEqual({ param1: 'foo', param2: 'bar', param3: '666' })
+    })
 
-  it('should evaluate to correct number of calls', async() => {
-    await request(mockServer.server).get('/endpoint1/')
-    expect(mockServer.timesCalled('/endpoint1/', 'get')).toBe(1)
+    it('should append further calls to the list of query parameters', async() => {
+      await request(mockServer.server).get('/endpoint1/?param1=foo&param2=bar&param3=666')
+      await request(mockServer.server).get('/endpoint1/?param1=newFoo&param2=baz&param3=0')
+      expect(mockServer.queryParameters('/endpoint1/', 'get').length).toEqual(2)
+      expect(mockServer.queryParameters('/endpoint1/', 'get')[0]).toEqual({ param1: 'foo', param2: 'bar', param3: '666' })
+      expect(mockServer.queryParameters('/endpoint1/', 'get')[1]).toEqual({ param1: 'newFoo', param2: 'baz', param3: '0' })
+    })
 
-    await request(mockServer.server).get('/endpoint1/')
-    expect(mockServer.timesCalled('/endpoint1/', 'get')).toBe(2)
-
-    await request(mockServer.server).get('/endpoint1/')
-    await request(mockServer.server).get('/endpoint1/')
-    expect(mockServer.timesCalled('/endpoint1/', 'get')).toBe(4)
+    it('should not include path variables in query parameters', async() => {
+      await request(mockServer.server).get('/endpoint1/bar/?param=foo')
+      expect(mockServer.queryParameters('/endpoint1/bar/', 'get')[0]).toEqual({ param: 'foo' })
+    })
   })
 
   it('should reset stats when resetting response config', async() => {
-    await request(mockServer.server).get('/endpoint1/')
+    await request(mockServer.server).get('/endpoint1/?param=foo')
 
     mockServer.reset({
       '/endpoint2/': {
@@ -65,7 +116,9 @@ describe('Aietes Server verify call counts IT', () => {
 
     await request(mockServer.server).get('/endpoint2/')
     expect(mockServer.timesCalled('/endpoint1/', 'get')).toBe(0)
+    expect(mockServer.queryParameters('/endpoint1/', 'get').length).toBe(0)
     expect(mockServer.timesCalled('/endpoint2/', 'get')).toBe(1)
+    expect(mockServer.queryParameters('/endpoint2/', 'get').length).toBe(1)
   })
 
   it('should not reset stats when merely updating response config', async() => {
@@ -81,42 +134,26 @@ describe('Aietes Server verify call counts IT', () => {
 
     await request(mockServer.server).get('/endpoint1/')
     expect(mockServer.timesCalled('/endpoint1/', 'get')).toBe(2)
+    expect(mockServer.queryParameters('/endpoint1/', 'get').length).toBe(2)
   })
 
   it('should reset stats but not response config when calling clearStats', async() => {
-    await request(mockServer.server).get('/endpoint1/')
+    await request(mockServer.server).get('/endpoint1/?param=foo')
+    expect(mockServer.timesCalled('/endpoint1/', 'get')).toBe(1)
+    expect(mockServer.queryParameters('/endpoint1/', 'get').length).toBe(1)
 
     mockServer.clearStats()
-
-    await request(mockServer.server).get('/endpoint1/')
-    expect(mockServer.timesCalled('/endpoint1/', 'get')).toBe(1)
-  })
-
-  it('should ignore case of method parameter', async() => {
-    await request(mockServer.server).get('/endpoint1/')
-    expect(mockServer.timesCalled('/endpoint1/', 'GET')).toBe(1)
-  })
-
-  it('should ignore only return the number of calls to the given resource', async() => {
-    await request(mockServer.server).get('/endpoint1/pathvariable')
     expect(mockServer.timesCalled('/endpoint1/', 'get')).toBe(0)
+    expect(mockServer.queryParameters('/endpoint1/', 'get').length).toBe(0)
+
+    await request(mockServer.server).get('/endpoint1/?param=bar')
+    expect(mockServer.timesCalled('/endpoint1/', 'get')).toBe(1)
+    expect(mockServer.queryParameters('/endpoint1/', 'get').length).toBe(1)
+    expect(mockServer.queryParameters('/endpoint1/', 'get')[0]).toEqual({ param: 'bar' })
   })
 
-  it('should accept a predicate as a filter for path', async() => {
-    await request(mockServer.server).get('/endpoint1/')
-    await request(mockServer.server).get('/endpoint1/pathvariable')
-    expect(mockServer.timesCalled(path => { return path.startsWith('/endpoint') }, 'get')).toBe(2)
-  })
-
-  it('should accept a list of HTTP methods as a filter for method', async() => {
-    await request(mockServer.server).post('/endpoint1/')
-    await request(mockServer.server).get('/endpoint1/')
-    expect(mockServer.timesCalled('/endpoint1/', ['get', 'post'])).toBe(2)
-  })
-
-  it('should ignore query parameters', async() => {
-    await request(mockServer.server).get('/endpoint1/')
-    await request(mockServer.server).get('/endpoint1/?param=foo')
-    expect(mockServer.timesCalled('/endpoint1/', 'get')).toBe(2)
+  it('should return safe empty stats when no calls have been made', async() => {
+    expect(mockServer.timesCalled('/endpoint1/', 'get')).toBe(0)
+    expect(mockServer.queryParameters('/endpoint1/', 'get').length).toBe(0)
   })
 })

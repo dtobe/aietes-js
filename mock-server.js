@@ -76,6 +76,10 @@ class AietesServer {
     return this.stats.timesCalled(pathMatcher, methodMatcher)
   }
 
+  queryParameters(path, method) {
+    return this.stats.queryParameters(path, method)
+  }
+
   _setup() {
     this.app = express()
     this.app.use(accessLog)
