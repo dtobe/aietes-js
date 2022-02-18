@@ -13,7 +13,7 @@ declare class AietesServer {
   stop(): void
   setDelayMs(delayMs?: number, path?: string, method?: string): void
   timesCalled(pathMatcher: string | ((path: string) => boolean), methodMatcher: string | string[]): number
-
+  queryParameters(path: string, method: string): object[]
 }
 
 declare namespace AietesServer {

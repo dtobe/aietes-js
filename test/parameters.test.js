@@ -2,7 +2,7 @@ const request = require('supertest')
 const AietesServer = require('../mock-server')
 const getPort = require('get-port')
 
-describe('Aietes Server Timeout IT', () => {
+describe('Aietes Server path matching IT', () => {
   let mockServer
   const responseObject = {
     data: { field1: 1, field2: 'value' }
@@ -47,7 +47,7 @@ describe('Aietes Server Timeout IT', () => {
     expect(response.status).toEqual(404)
   })
 
-  it('should ignore query parameters', async() => {
+  it('should ignore query parameters in path matching', async() => {
     const response = await request(mockServer.server).get('/endpoint1/pathValue?queryParam=queryValue')
     expect(response.status).toEqual(200)
     expect(response.body).toMatchObject({ field1: 1, field2: 'value' })
