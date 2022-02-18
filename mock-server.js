@@ -1,14 +1,17 @@
 const express = require('express')
+const EventEmitter = require('events')
 const _ = require('lodash')
 const enableDestroy = require('server-destroy')
 const unconfiguredRoutesHandler = require('./lib/errorHandler')
 const validateResponses = require('./lib/configValidator')
 const ResponseConfig = require('./lib/response')
+const ResponseStats = require('./lib/responseStats')
 const { log, accessLog } = require('./lib/logging')
 
 class AietesServer {
   constructor(responsesConfig, port) {
-    this.stats = {}
+    this.eventEmitter = new EventEmitter()
+    this.stats = new ResponseStats(this.eventEmitter)
     this.responses = createResponses(responsesConfig)
     this.serverPort = port
     this.app = null
@@ -43,16 +46,14 @@ class AietesServer {
   reset(responsesConfig) {
     log.info('Restarting Aietes server')
     this._end()
-    this.stats = {}
+    this.stats = new ResponseStats(this.eventEmitter)
     this.responses = createResponses(responsesConfig)
     this._setup()
     this.start()
   }
 
   clearStats() {
-    Object.getOwnPropertyNames(this.stats).forEach(prop => {
-      delete this.stats[prop] // must not re-assign the object reference
-    })
+    this.stats.clear()
   }
 
   stop() {
@@ -72,32 +73,11 @@ class AietesServer {
   }
 
   timesCalled(pathMatcher, methodMatcher) {
-    let matchingPathStats
-    if (typeof pathMatcher === 'function') {
-      matchingPathStats = _.filter(this.stats, (statsByMethod, path) => pathMatcher(path))
-    } else {
-      matchingPathStats = [this.stats[pathMatcher]]
-    }
+    return this.stats.timesCalled(pathMatcher, methodMatcher)
+  }
 
-    let numCalls = 0
-    const statList = _.flatMap(matchingPathStats, (statBlock) => {
-      return _.filter(statBlock, (stats, method) => {
-        if (Array.isArray(methodMatcher)) {
-          return methodMatcher.map(value => value.toLowerCase()).includes(method)
-        } else {
-          return method === methodMatcher.toLowerCase()
-        }
-      })
-        .map((stats) => {
-          return stats.numCalls
-        })
-    })
-
-    numCalls = _.reduce(statList, function(sum, n) {
-      return sum + n
-    }, 0)
-
-    return numCalls
+  queryParameters(path, method) {
+    return this.stats.queryParameters(path, method)
   }
 
   _setup() {
@@ -107,6 +87,7 @@ class AietesServer {
       _: _
     }
     this._makeRoutes()
+    this.stats.listen()
     this.app.use(unconfiguredRoutesHandler)
   }
 
@@ -124,7 +105,7 @@ class AietesServer {
   _makeRoutes() {
     this.responses.forEach((response) => {
       log.info(`Creating route handler for ${response.method} ${response.path}`)
-      this.app[response.method](response.path, response.createHandler(this.stats))
+      this.app[response.method](response.path, response.createHandler(this.eventEmitter))
     })
   }
 }
