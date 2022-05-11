@@ -9,14 +9,14 @@
   },
   "author": "Kai",
   "dependencies": {
-    "axios": "^0.19.0",
+    "axios": "^0.26.0",
     "config": "^3.2.0",
     "express": "^4.17.1"
   },
   "devDependencies": {
-    "get-port": "^5.0.0",
-    "jest": "^24.8.0",
-    "supertest": "^4.0.2"
+    "get-port": "^5.1.1",
+    "jest": "^27.5.1",
+    "supertest": "^6.2.2"
   },
   "jest": {
     "testEnvironment": "node",

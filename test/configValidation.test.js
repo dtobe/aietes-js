@@ -59,7 +59,7 @@ describe('response config validation', () => {
         data: { '3field1': 1, field2: 'value', field3: false }
       }
       expect(() => validateResponseConfig(validResponseObject, '/foo', 'get'))
-        .toThrow('Validation error: \'.status\' should be integer')
+        .toThrow(/Validation error: '.status' must be integer/)
     })
 
     it('throws error for invalid headers config', () => {
@@ -69,7 +69,7 @@ describe('response config validation', () => {
         data: { '3field1': 1, field2: 'value', field3: false }
       }
       expect(() => validateResponseConfig(validResponseObject, '/foo', 'get'))
-        .toThrow('Validation error: property [some-header/3] at path \'.headers\' should match pattern "^[\\w-]+$"')
+        .toThrow(/Validation error: property \[some-header\/3\] at path '.headers' must match pattern "\^\[\\w-\]\+\$"/)
     })
 
     it('throws error for invalid response body config', () => {
@@ -77,7 +77,7 @@ describe('response config validation', () => {
         data: false
       }
       expect(() => validateResponseConfig(validResponseObject, '/foo', 'get'))
-        .toThrow('Validation error: \'.data\' should be object')
+        .toThrow(/Validation error: '.data' must be object/)
     })
 
     it('throws error for invalid response meta config', () => {
@@ -87,7 +87,7 @@ describe('response config validation', () => {
         meta: { delayMs: '50ms' }
       }
       expect(() => validateResponseConfig(validResponseObject, '/foo', 'get'))
-        .toThrow('Validation error: \'.meta.delayMs\' should be integer')
+        .toThrow(/Validation error: '.meta.delayMs' must be integer/)
     })
   })
 })
