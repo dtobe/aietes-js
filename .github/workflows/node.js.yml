@@ -34,9 +34,6 @@ jobs:
         node_version: [14.x, 16.x, 18.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
         os: [ubuntu-latest, macos-latest]
-        include:
-          - os: ubuntu-18.04
-            node_version: 16.20.0
 
     name: Node.js ${{ matrix.node_version }} on ${{ matrix.os }}
     steps:
