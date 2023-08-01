@@ -57,6 +57,6 @@ jobs:
         node-version: 14
     - run: yarn --frozen-lockfile
     - run: yarn coverage
-    - uses: coverallsapp/github-action@v1.2.4
+    - uses: coverallsapp/github-action@v2.2.1
       with:
         github-token: ${{secrets.GITHUB_TOKEN}}
