@@ -37,6 +37,11 @@ describe('AietesServer IT', () => {
             responseObject2
           ]
         },
+        '/endpoint-list': {
+          get: {
+            data: [{ field1: 'value' }, { field1: 'value2' }]
+          }
+        },
         '/endpoint-caps': {
           GET: {}
         }
@@ -77,6 +82,12 @@ describe('AietesServer IT', () => {
     expect(res.status).toBe(201)
     expect(res.header['some-header']).toEqual('hasenase')
     expect(res.body).toMatchObject({ field1: 1, field2: 'value' })
+  })
+
+  it('response body may be a list', async() => {
+    const res = await request(mockServer.server).get('/endpoint-list')
+    expect(res.status).toBe(200)
+    expect(res.body).toMatchObject([{ field1: 'value' }, { field1: 'value2' }])
   })
 
   it('should return responses in a list in a round robin fashion', async() => {
