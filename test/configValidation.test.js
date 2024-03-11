@@ -43,6 +43,13 @@ describe('response config validation', () => {
       expect(() => validateResponseConfig(validResponseObject, '/foo', 'get')).not.toThrow()
     })
 
+    it('successfully validates response config with a list of objects as response body', () => {
+      const validResponseObject = {
+        data: [{ field1: 1, field2: 'value', field3: false }, { field1: 1, field2: 'value', field3: false }]
+      }
+      expect(() => validateResponseConfig(validResponseObject, '/foo', 'get')).not.toThrow()
+    })
+
     it('successfully validates complex response body config', () => {
       const validResponseObject = {
         status: 201,

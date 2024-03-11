@@ -1,6 +1,6 @@
 {
   "name": "aietes-js",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "description": "JSON mock server for NodeJs applications",
   "main": "mock-server.js",
   "types": "mock-server.d.ts",
