@@ -15,9 +15,9 @@
   },
   "pre-commit": "eslint",
   "repository": "github:dtobe/aietes-js",
-  "author": "Tobias Ehrler <tobias_ehrler@yahoo.co.uk>",
+  "author": "dtobe <tobias_ehrler@yahoo.co.uk>",
   "contributors": [
-    "dtobe <tobias.ehrler@yahoo.co.uk>",
+    "dtobe <tobias_ehrler@yahoo.co.uk>",
     "jonnunezalvarez <devjaiser@gmail.com>",
     "spik3r <kaiftait@gmail.com>"
   ],
