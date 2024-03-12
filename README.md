@@ -1,7 +1,8 @@
 # aietes-js
 Express.js-based mock server for RESTful APIs inspired by Wiremock.
 
-[![Npm](https://img.shields.io/npm/v/aietes-js.svg)](https://www.npmjs.com/package/aietes-js) 
+[![Npm](https://img.shields.io/npm/v/aietes-js.svg)](https://www.npmjs.com/package/aietes-js)
+![Node LTS](https://img.shields.io/node/v-lts/aietes-js)
 [![Build Status](https://github.com/dtobe/aietes-js/actions/workflows/node.js.yml/badge.svg)](https://github.com/dtobe/aietes-js/actions/workflows/node.js.yml) 
 [![Coverage Status](https://coveralls.io/repos/github/dtobe/aietes-js/badge.svg?branch=master)](https://coveralls.io/github/dtobe/aietes-js?branch=master) 
 [![Join the chat at https://gitter.im/aietes-js/community](https://badges.gitter.im/aietes-js/community.svg)](https://gitter.im/aietes-js/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
