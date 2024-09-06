@@ -19,7 +19,7 @@ Express.js-based mock server for RESTful APIs inspired by Wiremock.
 - Query number of calls for assertions
 
 ## Installation 
-To run aietes-js [Node.js](https://nodejs.org/en/download/) v10 or newer is required.
+To run aietes-js [Node.js](https://nodejs.org/en/download/) v16 or newer is recommended.
 
 Install Aietes-js using your preferred dependency manager:
 
