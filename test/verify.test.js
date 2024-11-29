@@ -89,6 +89,7 @@ describe('Aietes Server verify call stats IT', () => {
       await request(mockServer.server).get('/endpoint1/?param1=foo&param2=bar&param3=666')
       expect(mockServer.queryParameters('/endpoint1/', 'get').length).toEqual(1)
       expect(mockServer.queryParameters('/endpoint1/', 'get')[0]).toEqual({ param1: 'foo', param2: 'bar', param3: '666' })
+      expect(mockServer.calls('/endpoint1/', 'get')[0].queryParams).toEqual({ param1: 'foo', param2: 'bar', param3: '666' })
     })
 
     it('should append further calls to the list of query parameters', async() => {
@@ -97,11 +98,14 @@ describe('Aietes Server verify call stats IT', () => {
       expect(mockServer.queryParameters('/endpoint1/', 'get').length).toEqual(2)
       expect(mockServer.queryParameters('/endpoint1/', 'get')[0]).toEqual({ param1: 'foo', param2: 'bar', param3: '666' })
       expect(mockServer.queryParameters('/endpoint1/', 'get')[1]).toEqual({ param1: 'newFoo', param2: 'baz', param3: '0' })
+      expect(mockServer.calls('/endpoint1/', 'get')[0].queryParams).toEqual({ param1: 'foo', param2: 'bar', param3: '666' })
+      expect(mockServer.calls('/endpoint1/', 'get')[1].queryParams).toEqual({ param1: 'newFoo', param2: 'baz', param3: '0' })
     })
 
     it('should not include path variables in query parameters', async() => {
       await request(mockServer.server).get('/endpoint1/bar/?param=foo')
       expect(mockServer.queryParameters('/endpoint1/bar/', 'get')[0]).toEqual({ param: 'foo' })
+      expect(mockServer.calls('/endpoint1/bar/', 'get')[0].queryParams).toEqual({ param: 'foo' })
     })
   })
 
@@ -110,6 +114,7 @@ describe('Aietes Server verify call stats IT', () => {
       await request(mockServer.server).get('/endpoint1/').set('header1', 'headervalue1').set('header2', 'headervalue2')
       expect(mockServer.headers('/endpoint1/', 'get').length).toEqual(1)
       expect(mockServer.headers('/endpoint1/', 'get')[0]).toMatchObject({ header1: 'headervalue1', header2: 'headervalue2' }) // not equal because there are automatically added headers
+      expect(mockServer.calls('/endpoint1/', 'get')[0].headers).toMatchObject({ header1: 'headervalue1', header2: 'headervalue2' })
     })
 
     it('should append further calls to the list of query parameters', async() => {
@@ -118,6 +123,8 @@ describe('Aietes Server verify call stats IT', () => {
       expect(mockServer.headers('/endpoint1/', 'get').length).toEqual(2)
       expect(mockServer.headers('/endpoint1/', 'get')[0]).toMatchObject({ header1: 'headervalue1', header2: 'headervalue2' })
       expect(mockServer.headers('/endpoint1/', 'get')[1]).toMatchObject({ headerx: 'headervalueX', headery: 'headervalueY' })
+      expect(mockServer.calls('/endpoint1/', 'get')[0].headers).toMatchObject({ header1: 'headervalue1', header2: 'headervalue2' })
+      expect(mockServer.calls('/endpoint1/', 'get')[1].headers).toMatchObject({ headerx: 'headervalueX', headery: 'headervalueY' })
     })
   })
 
@@ -133,9 +140,12 @@ describe('Aietes Server verify call stats IT', () => {
     await request(mockServer.server).get('/endpoint2/')
     expect(mockServer.timesCalled('/endpoint1/', 'get')).toBe(0)
     expect(mockServer.queryParameters('/endpoint1/', 'get').length).toBe(0)
+    expect(mockServer.calls('/endpoint1/', 'get').length).toBe(0)
+
     expect(mockServer.timesCalled('/endpoint2/', 'get')).toBe(1)
     expect(mockServer.queryParameters('/endpoint2/', 'get').length).toBe(1)
     expect(mockServer.headers('/endpoint2/', 'get').length).toBe(1)
+    expect(mockServer.calls('/endpoint2/', 'get').length).toBe(1)
   })
 
   it('should not reset stats when merely updating response config', async() => {
@@ -160,21 +170,27 @@ describe('Aietes Server verify call stats IT', () => {
     expect(mockServer.timesCalled('/endpoint1/', 'get')).toBe(1)
     expect(mockServer.queryParameters('/endpoint1/', 'get').length).toBe(1)
     expect(mockServer.headers('/endpoint1/', 'get').length).toBe(1)
+    expect(mockServer.calls('/endpoint1/', 'get').length).toBe(1)
 
     mockServer.clearStats()
     expect(mockServer.timesCalled('/endpoint1/', 'get')).toBe(0)
     expect(mockServer.queryParameters('/endpoint1/', 'get').length).toBe(0)
     expect(mockServer.headers('/endpoint1/', 'get').length).toBe(0)
+    expect(mockServer.calls('/endpoint1/', 'get').length).toBe(0)
 
     await request(mockServer.server).get('/endpoint1/?param=bar')
     expect(mockServer.timesCalled('/endpoint1/', 'get')).toBe(1)
     expect(mockServer.queryParameters('/endpoint1/', 'get').length).toBe(1)
     expect(mockServer.queryParameters('/endpoint1/', 'get')[0]).toEqual({ param: 'bar' })
     expect(mockServer.headers('/endpoint1/', 'get').length).toBe(1)
+    expect(mockServer.calls('/endpoint1/', 'get').length).toBe(1)
+    expect(mockServer.calls('/endpoint1/', 'get')[0].queryParams).toEqual({ param: 'bar' })
   })
 
   it('should return safe empty stats when no calls have been made', async() => {
     expect(mockServer.timesCalled('/endpoint1/', 'get')).toBe(0)
     expect(mockServer.queryParameters('/endpoint1/', 'get').length).toBe(0)
+    expect(mockServer.headers('/endpoint1/', 'get').length).toBe(0)
+    expect(mockServer.calls('/endpoint1/', 'get').length).toBe(0)
   })
 })

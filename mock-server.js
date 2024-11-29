@@ -84,6 +84,10 @@ class AietesServer {
     return this.stats.headers(path, method)
   }
 
+  calls(path, method) {
+    return this.stats.calls(path, method)
+  }
+
   _setup() {
     this.app = express()
     this.app.use(accessLog)

@@ -15,6 +15,7 @@ declare class AietesServer {
   timesCalled(pathMatcher: string | ((path: string) => boolean), methodMatcher: string | string[]): number
   queryParameters(path: string, method: string): object[]
   headers(path: string, method: string): object[]
+  calls(path: string, method: string): AietesServer.CallStats[]
 }
 
 declare namespace AietesServer {
@@ -29,5 +30,10 @@ declare namespace AietesServer {
         }
       }
     }
+  }
+
+  export interface CallStats {
+    queryParams: object,
+    headers: object
   }
 }
