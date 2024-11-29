@@ -233,6 +233,26 @@ will return a list of objects with the single element
 ```
 Objects for further calls are appended to this list.
 
+##### Request headers
+The Aietes server instances also offers an API call to obtain the request headers passed to the mock on a per call basis.
+The matching of calls is stricter since parameters can only apply to a single call, so only the exact strings for path and method are allowed.
+Assuming a call to the mock endpoint such as
+```
+GET /endpoint1/
+Headers:
+ - header1: value1
+ - header2: value2
+```
+a call to
+```javascript
+mockServer.headers('/endpoint1/', 'get')
+```
+will return a list of objects with the single element
+```
+{ header1: 'value1', header2: 'value2' }
+```
+Objects for further calls are appended to this list.
+
 ##### Clearing stats
 To clear the call stats:
 ```javascript
