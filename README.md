@@ -216,22 +216,36 @@ The second argument may also be a list of HTTP methods:
 mockServer.timesCalled('/endpoint1/', ['get', 'post'])
 ```
 
-##### Query parameters
-The Aietes server instances also offers an API call to obtain the query parameters passed to the mock on a per call basis.
+##### Call stats
+The Aietes server instances also offers an API call to obtain the stats for individual calls captured by the mock.
 The matching of calls is stricter since parameters can only apply to a single call, so only the exact strings for path and method are allowed.
-Assuming a call to the mock endpoint such as
+Assuming calls to a mock endpoint such as
 ```
 GET /endpoint1/?param1=foo&param2=bar&param3=42
+Headers:
+ - header1: value1
 ```
 a call to
 ```javascript
-mockServer.queryParameters('/endpoint1/', 'get')
+mockServer.calls('/endpoint1/', 'get')
 ```
-will return a list of objects with the single element
+will return a list of objects, each representing a single call in the format
 ```
-{ param1: 'foo', param2: 'bar', param3: '42' }
+{
+  queryParams: { param1: 'foo', param2: 'bar', param3: '42' }
+  headers: { header1: 'value1' }
+}
 ```
-Objects for further calls are appended to this list.
+Each further call is appended to this list, so index 0 represents the earliest call.
+
+The previous API methods return the object properties of `queryParams` and `headers` respectively as an array containing all calls.
+```javascript
+mockserver.queryParameters('/endpoint1/', 'get')
+ --> [ { param1: 'foo', param2: 'bar', param3: '42' }, ... ]
+mockserver.headers('/endpoint1/', 'get')
+ --> [ { header1: 'value1' }, ... ]
+````
+:warning: This API is now deprecated.
 
 ##### Clearing stats
 To clear the call stats:

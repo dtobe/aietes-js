@@ -76,12 +76,18 @@ class AietesServer {
     return this.stats.timesCalled(pathMatcher, methodMatcher)
   }
 
+  /**
+   * @deprecated
+   */
   queryParameters(path, method) {
-    return this.stats.queryParameters(path, method)
+    return this.stats.calls(path, method).map(call => call.queryParams)
   }
 
+  /**
+   * @deprecated
+   */
   headers(path, method) {
-    return this.stats.headers(path, method)
+    return this.stats.calls(path, method).map(call => call.headers)
   }
 
   calls(path, method) {
